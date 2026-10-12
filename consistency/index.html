@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>꾸준함의 착시</title>
+<meta name="description" content="매일 60분 vs 매일 30분. 100일 뒤 누가 더 많이 했을까? 빼먹은 다음 날의 규칙 하나가 100일을 바꿉니다.">
+<meta property="og:title" content="꾸준함의 착시">
+<meta property="og:description" content="매일 60분 vs 매일 30분. 100일 뒤 누가 더 많이 했을까?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap">
+<style>
+/* Layout: one calm scene at a time. One accent color, soft neutrals, light type. */
+:root{
+  --bg:#F5F4F0; --surface:#FFFFFF; --ink:#24272B; --muted:#80858C; --line:#E4E1DB;
+  --accent:#2E6B5E; --accent-soft:#E4EEEA; --miss:#DEDAD3;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7;font-weight:400;-webkit-font-smoothing:antialiased;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.app{max-width:520px;margin:0 auto;min-height:100%;padding-inline:22px;padding-block:24px 44px;display:flex;flex-direction:column}
+.top{display:flex;justify-content:space-between;align-items:center;min-height:32px}
+.top .name{font-size:14px;font-weight:500;color:var(--muted)}
+.link{background:none;border:0;color:var(--muted);font-size:14px;cursor:pointer;padding:6px 0}
+.scene{flex:1;display:flex;flex-direction:column;justify-content:center;padding-block:24px}
+.scene[hidden]{display:none!important}
+
+/* intro */
+.lines{display:flex;flex-direction:column;gap:10px}
+.lines p{margin:0;font-size:20px;font-weight:500;line-height:1.5;opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease,color .6s ease}
+.lines p.on{opacity:1;transform:none}
+.lines p.past{color:#A3A7AD}
+.lines p b{font-weight:700;color:var(--accent)}
+.lines p .q{display:block;margin-top:14px;font-size:23px;font-weight:700;color:var(--ink)}
+.stage{display:flex;justify-content:center;gap:28px;margin-bottom:22px;min-height:168px}
+.fig{display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
+.fig.on{opacity:1;transform:none}
+.fig svg{width:118px;height:auto;display:block}
+.fig .tag{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:1px 10px}
+.fig .tag b{color:var(--ink);font-weight:700}
+.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.94)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+.mini{display:inline-block;width:40px;flex:none}
+.mini svg,.me svg{width:100%;height:auto;display:block}
+.lane .who{align-items:center;gap:6px}
+.lane .who .nm{display:flex;align-items:center;gap:4px}
+.me{display:inline-block;width:84px;flex:none}
+.intro-next{margin-top:36px;opacity:0;transition:opacity .5s ease;pointer-events:none}
+.intro-next.on{opacity:1;pointer-events:auto}
+
+h1,h2{margin:0;font-weight:700;line-height:1.4;letter-spacing:-.02em}
+h1{font-size:24px}
+h2{font-size:22px}
+.eyebrow{font-size:13px;color:var(--muted);margin:0 0 8px}
+.help{color:var(--muted);font-size:15px;margin:8px 0 0}
+.progress{display:flex;gap:4px;margin-bottom:18px}
+.progress i{flex:1;height:3px;border-radius:2px;background:var(--line)}
+.progress i.on{background:var(--accent)}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:24px}
+.choice{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;padding:15px 18px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:16px;font-weight:500;transition:border-color .15s,background .15s}
+.choice small{display:block;font-weight:400;font-size:13.5px;color:var(--muted);margin-top:1px}
+.choice:hover{border-color:#C9C5BD}
+.choice.picked{border-color:var(--accent);background:var(--accent-soft)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid2 .choice{justify-content:center}
+.what .choice{justify-content:flex-start;gap:8px;padding:13px 14px;font-size:15px}
+.what .ic{font-size:18px;line-height:1}
+.what .custom-btn{grid-column:1/-1;justify-content:center;color:var(--muted);font-weight:400}
+.custom{margin-top:14px}
+.custom input{display:block;width:100%;margin-top:6px;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:16px;color:var(--ink)}
+.custom input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+
+.btn{display:block;width:100%;margin-top:14px;padding:15px;border-radius:12px;border:0;background:var(--ink);color:#fff;font-weight:500;font-size:16px;cursor:pointer;text-align:center;text-decoration:none}
+.btn.line{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+
+/* calendars */
+.cal{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.cal i{aspect-ratio:1;border-radius:3px;background:#EEEBE6;display:block;transition:background .2s}
+.cal i.d{background:var(--accent)}
+.cal i.m{background:var(--miss)}
+.cal i.w{background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);background-image:repeating-linear-gradient(135deg,transparent 0 3px,#E9E6E0 3px 4px)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted);margin-top:12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.legend .ld{background:var(--accent)}
+.legend .lm{background:var(--miss)}
+.legend .lw{background:var(--surface);box-shadow:inset 0 0 0 1px #CFCBC4}
+
+.race{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.lane{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.lane .who{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted)}
+.lane .who b{font-size:15px;color:var(--ink);font-weight:700}
+.lane .hrs{font-size:30px;font-weight:300;line-height:1.2;margin:4px 0 10px;font-variant-numeric:tabular-nums}
+.lane.win .hrs{color:var(--accent);font-weight:400}
+.verdict{margin-top:16px;font-size:16px;line-height:1.75}
+.verdict .yours{display:block;font-size:13.5px;color:var(--muted);margin-bottom:4px}
+.verdict b{font-weight:700;color:var(--accent)}
+
+/* result */
+.result-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:6px}
+.big{font-size:56px;font-weight:300;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.big small{font-size:18px;font-weight:400;margin-left:4px;color:var(--muted)}
+.plan{text-align:right;font-size:13px;color:var(--muted)}
+.plan b{display:block;font-size:17px;font-weight:500;color:var(--ink)}
+.seg{display:flex;gap:4px;margin-top:16px;background:#ECE9E3;border-radius:10px;padding:3px}
+.seg button{flex:1;border:0;background:none;padding:8px 6px;border-radius:8px;font-size:14px;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.mycal{margin-top:16px}
+.mycal .cal{gap:4px}
+.punch{margin-top:18px;padding:16px 18px;border-radius:12px;background:var(--accent-soft);font-size:16px;line-height:1.7}
+.punch b{color:var(--accent);font-weight:700}
+.block{margin-top:26px}
+.block h3{margin:0 0 10px;font-size:14px;font-weight:500;color:var(--muted)}
+.share-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.share-row .btn{margin-top:0;font-size:15px;padding:13px 8px}
+.cta{padding:18px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.cta p{margin:0;font-size:15.5px}
+.cta-card{display:flex;align-items:center;gap:12px;margin-top:14px;padding:14px;border-radius:12px;background:var(--accent-soft);color:var(--ink);text-decoration:none;transition:background .15s}
+.cta-card:hover{background:#D9E8E2}
+.cc-av{flex:none;width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:16px}
+.cc-body{flex:1;min-width:0;display:flex;flex-direction:column}
+.cc-k{font-size:12.5px;color:var(--muted)}
+.cc-t{font-size:15.5px;font-weight:700;line-height:1.4}
+.cc-go{flex:none;font-size:18px;color:var(--accent)}
+.note{margin-top:26px;font-size:12.5px;color:var(--muted);line-height:1.7}
+.friend{margin-bottom:22px;padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:14px;color:var(--muted)}
+.friend b{color:var(--ink);font-weight:500}
+
+.sheet{position:fixed;inset:0;background:rgba(36,39,43,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}
+.sheet[hidden]{display:none!important}
+.sheet .inner{max-width:400px;width:100%;background:var(--surface);border-radius:14px;padding:14px}
+.sheet img{width:100%;border-radius:8px;display:block;border:1px solid var(--line)}
+.sheet p{font-size:13px;color:var(--muted);margin:10px 0 0;text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:30;white-space:nowrap}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.lines p,.intro-next,.cal i,.fig{transition:none}.pop{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><span class="name">꾸준함의 착시</span><button class="link" id="topBtn" type="button">건너뛰기</button></div>
+
+  <section class="scene" id="s-intro" aria-live="polite">
+    <div class="friend" id="friendBox" hidden></div>
+    <div class="stage" aria-hidden="true">
+      <div class="fig" id="figA"><div id="svgA"></div><span class="tag"><b>A</b> · 매일 60분</span></div>
+      <div class="fig" id="figB"><div id="svgB"></div><span class="tag"><b>B</b> · 매일 30분</span></div>
+    </div>
+    <div class="lines" id="lines"></div>
+    <button class="btn intro-next" id="introNext" type="button">확인하러 가기</button>
+  </section>
+
+  <section class="scene" id="s-predict" hidden>
+    <p class="eyebrow">100일 뒤, 누가 더 많이 했을까?</p>
+    <h1>당신의 예상은?</h1>
+    <div class="choices">
+      <button class="choice" type="button" data-guess="A"><span>A<small>매일 60분 · 빼먹으면 월요일부터 다시</small></span></button>
+      <button class="choice" type="button" data-guess="B"><span>B<small>매일 30분 · 빼먹으면 내일 바로 다시</small></span></button>
+      <button class="choice" type="button" data-guess="same"><span>비슷할 것 같다</span></button>
+    </div>
+  </section>
+
+  <section class="scene" id="s-race" hidden>
+    <p class="eyebrow">100일 동안의 달력</p>
+    <h2 id="raceTitle">두 사람의 100일</h2>
+    <div class="race">
+      <div class="lane" id="laneA"><div class="who"><span class="nm" id="miniA"></span><span>60분 · 월요일부터</span></div><div class="hrs" id="aHrs">0시간</div><div class="cal" id="aCal"></div></div>
+      <div class="lane" id="laneB"><div class="who"><span class="nm" id="miniB"></span><span>30분 · 바로 다시</span></div><div class="hrs" id="bHrs">0시간</div><div class="cal" id="bCal"></div></div>
+    </div>
+    <div class="legend"><span><i class="ld"></i>한 날</span><span><i class="lm"></i>빼먹은 날</span><span><i class="lw"></i>월요일을 기다린 날</span></div>
+    <p class="verdict" id="raceVerdict" hidden></p>
+    <button class="btn" id="toMine" type="button" hidden>내 100일 확인하러 가기</button>
+  </section>
+
+  <section class="scene" id="s-q1" hidden>
+    <div class="progress"><i class="on"></i><i></i><i></i><i></i></div>
+    <h2>무엇을 꾸준히 하고 싶나요?</h2>
+    <div class="choices grid2 what" data-q="what">
+      <button class="choice" type="button" data-v="운동"><span class="ic">🏃</span>운동</button>
+      <button class="choice" type="button" data-v="다이어트"><span class="ic">🥗</span>다이어트</button>
+      <button class="choice" type="button" data-v="블로그 글쓰기"><span class="ic">✍️</span>블로그 글쓰기</button>
+      <button class="choice" type="button" data-v="독서"><span class="ic">📖</span>독서</button>
+      <button class="choice" type="button" data-v="공부"><span class="ic">📚</span>공부·자격증</button>
+      <button class="choice" type="button" data-v="영어"><span class="ic">🗣️</span>영어</button>
+      <button class="choice" type="button" data-v="인스타·숏폼"><span class="ic">📱</span>인스타·숏폼</button>
+      <button class="choice" type="button" data-v="영업 연락"><span class="ic">📞</span>영업 연락</button>
+      <button class="choice" type="button" data-v="일찍 일어나기"><span class="ic">⏰</span>일찍 일어나기</button>
+      <button class="choice" type="button" data-v="일기 쓰기"><span class="ic">📝</span>일기 쓰기</button>
+      <button class="choice custom-btn" type="button" data-custom="1">직접 입력할게요</button>
+    </div>
+    <div class="custom" id="customBox" hidden>
+      <label for="whatInput" class="help">무엇을 하고 싶나요? (15자 이내)</label>
+      <input id="whatInput" type="text" maxlength="15" placeholder="예: 줄넘기, 기타 연습" autocomplete="off">
+      <button class="btn" type="button" id="customOk">다음</button>
+    </div>
+  </section>
+  <section class="scene" id="s-q2" hidden>
+    <div class="progress"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+    <h2>하루에 몇 분 하기로 할까요?</h2>
+    <div class="choices grid2" data-q="mins">
+      <button class="choice" type="button" data-v="10">10분</button>
+      <button class="choice" type="button" data-v="30">30분</button>
+      <button class="choice" type="button" data-v="60">60분</button>
+      <button class="choice" type="button" data-v="120">2시간</button>
+    </div>
+  </section>
+  <section class="scene" id="s-q3" hidden>
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+    <h2>열흘 중 며칠쯤 지킬 것 같나요?</h2>
+    <p class="help">의지 말고, 지난 경험으로 골라 주세요.</p>
+    <div class="choices grid2" data-q="prob">
+      <button class="choice" type="button" data-v="90">9일</button>
+      <button class="choice" type="button" data-v="70">7일</button>
+      <button class="choice" type="button" data-v="50">5일</button>
+      <button class="choice" type="button" data-v="30">3일</button>
+    </div>
+  </section>
+  <section class="scene" id="s-q4" hidden>
+    <div class="progress"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+    <h2>하루 빼먹은 다음 날, 나는?</h2>
+    <div class="choices" data-q="rule">
+      <button class="choice" type="button" data-v="immediate"><span>내일 바로 다시 한다<small>어제는 어제</small></span></button>
+      <button class="choice" type="button" data-v="monday"><span>월요일부터 다시 한다<small>이번 주는 망했으니까</small></span></button>
+      <button class="choice" type="button" data-v="guilt"><span>자책하다 더 미룬다<small>빼먹을수록 하기 싫어짐</small></span></button>
+      <button class="choice" type="button" data-v="quit3"><span>사흘 연속 빼먹으면 그만둔다<small>원래 이런 사람이야</small></span></button>
+    </div>
+  </section>
+
+  <section class="scene" id="s-result" hidden>
+    <p class="eyebrow" id="resWhat">나의 100일</p>
+    <div class="result-head">
+      <div style="display:flex;align-items:flex-end;gap:10px"><span id="meFig"></span><div class="big" id="resBig">0<small>시간</small></div></div>
+      <div class="plan">계획<b id="resPlan">100시간</b><span id="resPct"></span></div>
+    </div>
+    <div class="seg" role="group" aria-label="규칙 비교">
+      <button type="button" id="tMine" aria-pressed="true">내 규칙</button>
+      <button type="button" id="tAlt" aria-pressed="false">바로 다시였다면</button>
+    </div>
+    <div class="mycal"><div class="cal" id="myCal"></div></div>
+    <div class="legend"><span><i class="ld"></i>한 날</span><span><i class="lm"></i>빼먹은 날</span><span><i class="lw"></i>규칙 때문에 쉰 날</span></div>
+    <p class="punch" id="punch"></p>
+
+    <div class="block">
+      <h3>내 100일 보내기</h3>
+      <div class="share-row">
+        <button class="btn" type="button" id="shKakao" style="background:var(--accent)">카카오톡으로 보내기</button>
+        <button class="btn line" type="button" id="shImg">이미지 저장</button>
+      </div>
+    </div>
+
+    <div class="block cta">
+      <p>빼먹어도 다음 날 다시 쓰는 사람들. 21일 동안 매일 블로그를 쓰는 「블로그 전사」를 모집하고 있어요.</p>
+      <a class="btn" id="ctaMain" href="#" data-type="mkt_blog">블로그 전사 모집글 보기</a>
+      <a class="btn line" id="ctaSub" href="#" data-type="opentalk">마케팅주의자 오픈톡방 들어가기</a>
+      <a class="cta-card" id="ctaLink" href="#" data-type="haengdong"><span class="cc-av" aria-hidden="true">행</span><span class="cc-body"><span class="cc-k">행동주의자의 글</span><span class="cc-t">나를 소개합니다 · 부와 행복의 추월차선</span></span><span class="cc-go" aria-hidden="true">→</span></a>
+    </div>
+
+    <button class="btn line" type="button" id="again">다시 해보기</button>
+    <p class="note">같은 조건으로 100일을 300번 돌려 가운데 값을 보여줍니다. 달력은 그중 대표 한 번입니다. 개인의 미래를 예측하는 계산이 아니라, 규칙에 따라 결과가 얼마나 달라지는지 보여주는 시뮬레이션입니다. 참고: Lally 외(2010)는 습관이 자리 잡는 데 중앙값 66일이 걸렸고, 한 번 빼먹은 것은 습관 형성에 큰 영향을 주지 않았다고 보고했습니다. 입력한 값은 이 기기 밖으로 나가지 않습니다.</p>
+  </section>
+</div>
+
+<div class="sheet" id="sheet" hidden><div class="inner"><img id="sheetImg" alt="내 100일 결과 카드"><button class="btn" type="button" id="sheetSave">저장하기</button><button class="btn line" type="button" id="sheetClose">닫기</button><p>저장이 안 되면 이미지를 길게 눌러 저장하세요.</p></div></div>
+<div class="toast" id="toast" role="status"></div>
+<canvas id="card" width="1080" height="1350" hidden></canvas>
+
+<script>
+/* ---------- settings: fill these in before launch ---------- */
+const CONFIG={
+  umamiWebsiteId:"",          // Umami Cloud 사이트 ID
+  kakaoJsKey:"",              // Kakao Developers JavaScript 키
+  cta:{
+    mkt_blog:"https://blog.naver.com/godehd54/224285040737?utm_source=micro_lab&utm_medium=result_main&utm_campaign=consistency",  // 마케팅주의자 블로그: [모집] 블로그 전사 (21일 블로그 글쓰기)
+    opentalk:"https://open.kakao.com/o/sjQvlOVg?utm_source=micro_lab&utm_medium=result_sub&utm_campaign=consistency",               // 마케팅주의자 오픈톡방
+    haengdong:"https://blog.naver.com/guraud22/222099927754?utm_source=micro_lab&utm_medium=result_link&utm_campaign=consistency"    // 행동주의자 블로그: 나를 소개합니다(부와 행복의 추월차선)
+  }
+};
+
+/* ---------- anonymous events ---------- */
+function track(name,data){try{if(window.umami&&umami.track)umami.track(name,data||{});}catch(e){} if(location.hostname==='localhost'||location.protocol==='file:')console.log('[event]',name,data||'');}
+if(CONFIG.umamiWebsiteId){const s=document.createElement('script');s.defer=true;s.src='https://cloud.umami.is/script.js';s.dataset.websiteId=CONFIG.umamiWebsiteId;document.head.appendChild(s);}
+
+/* ---------- engine ---------- */
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function simulate(effort,p,rule,seed){
+  const r=rng(seed);let total=0,miss=0,quit=false,wait=false,pc=p;const marks=new Array(100);
+  for(let d=0;d<100;d++){
+    if(wait&&d%7===0)wait=false;               // day 1 = Monday
+    let m;
+    if(quit||wait){m=2;r();}
+    else if(r()<pc){total+=effort;miss=0;pc=p;m=1;}
+    else{miss++;m=0;
+      if(rule==='monday')wait=true;
+      else if(rule==='quit3'&&miss>=3)quit=true;
+      else if(rule==='guilt')pc=Math.max(0.05,pc-0.15);}
+    marks[d]=m;
+  }
+  return{marks,total,quit};
+}
+function ensemble(effort,p,rule){
+  const runs=[];for(let s=1;s<=300;s++)runs.push(simulate(effort,p,rule,s*7919));
+  const mt=runs.map(x=>x.total).sort((a,b)=>a-b)[150];
+  let rep=runs[0];for(const x of runs)if(Math.abs(x.total-mt)<Math.abs(rep.total-mt))rep=x;
+  return{total:mt,rep,quitRate:runs.filter(x=>x.quit).length/300};
+}
+const RULES={immediate:'내일 바로 다시',monday:'월요일부터 다시',guilt:'자책하다 더 미룸',quit3:'사흘 빼먹으면 그만'};
+const hrs=m=>{const h=m/60;return (h>=10?Math.round(h):Math.round(h*10)/10)+'시간'};
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+let current='s-intro';
+function show(id){current=id;document.querySelectorAll('.scene').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0);
+  const t=$('topBtn');if(id==='s-intro'){t.hidden=false;t.textContent='건너뛰기';}else if(/^s-q[234]$/.test(id)){t.hidden=false;t.textContent='← 이전';}else t.hidden=true;}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2200);}
+async function copyText(text){try{await navigator.clipboard.writeText(text);return true;}catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}ta.remove();return ok;}}
+function makeCal(el){el.innerHTML='<i></i>'.repeat(100);return [...el.children];}
+const cls=m=>m===1?'d':m===0?'m':'w';
+function paintCal(cells,marks){marks.forEach((m,d)=>cells[d].className=cls(m));}
+async function pick(btn){btn.classList.add('picked');await sleep(180);btn.classList.remove('picked');}
+
+
+/* ---------- cartoon characters (inline SVG) ---------- */
+const SKIN='#F3D5BE',HAIR='#2F3236',CHEEK='#EBA897',PANTS='#3A3E44';
+function person(who,pose,shirt){
+  const ink='#24272B';
+  const sk=`stroke="${SKIN}" stroke-width="8" stroke-linecap="round" fill="none"`;
+  const ln=`stroke="${ink}" stroke-width="2.6" stroke-linecap="round" fill="none"`;
+  let arms='',eyes='',mouth='',props='';
+  let cheeks=`<circle cx="52" cy="70" r="5" fill="${CHEEK}" opacity=".5"/><circle cx="88" cy="70" r="5" fill="${CHEEK}" opacity=".5"/>`;
+  const down=`<path d="M47 98 q-8 14 -4 26" ${sk}/><path d="M93 98 q8 14 4 26" ${sk}/>`;
+  if(pose==='go'){
+    arms=`<path d="M48 96 q-14 -10 -12 -30" ${sk}/><path d="M92 96 q14 -10 12 -30" ${sk}/>`;
+    eyes=`<path d="M53 62 q5 -6 10 0" ${ln}/><path d="M77 62 q5 -6 10 0" ${ln}/>`;
+    mouth=`<path d="M61 71 q9 11 18 0 z" fill="${ink}"/>`;
+    props=`<path d="M14 72 h14 M10 86 h18 M16 100 h12" stroke="#CFCBC3" stroke-width="3" stroke-linecap="round"/>`;
+  }else if(pose==='miss'){
+    arms=down;
+    eyes=`<path d="M53 61 q5 4 10 0" ${ln}/><path d="M77 61 q5 4 10 0" ${ln}/>`;
+    mouth=`<path d="M66 76 h8" ${ln}/>`;
+    props=`<text x="104" y="34" font-size="15" font-weight="700" fill="#A3A7AD" font-family="sans-serif">z</text><text x="114" y="22" font-size="11" font-weight="700" fill="#A3A7AD" font-family="sans-serif">z</text>`;
+  }else if(pose==='wait'){
+    arms=`<path d="M50 104 q20 10 40 0" ${sk}/>`;
+    eyes=`<path d="M53 61 h10 M77 61 h10" ${ln}/><path d="M53 52 l9 3 M87 52 l-9 3" ${ln}/>`;
+    mouth=`<path d="M63 78 q7 -6 14 0" ${ln}/>`;cheeks='';
+    props=`<path d="M103 40 q6 9 0 13 q-6 -4 0 -13z" fill="#BFD6DE"/><g transform="translate(104 92)"><rect width="32" height="32" rx="5" fill="#fff" stroke="#E4E1DB" stroke-width="2"/><rect width="32" height="9" rx="4" fill="#CFCBC3"/><text x="16" y="27" text-anchor="middle" font-size="13" font-weight="700" fill="#80858C" font-family="sans-serif">월</text></g>`;
+  }else if(pose==='think'){
+    arms=`<path d="M47 98 q-8 14 -4 26" ${sk}/><path d="M92 98 q10 -12 -12 -20" ${sk}/>`;
+    eyes=`<circle cx="58" cy="60" r="3.5" fill="${ink}"/><circle cx="82" cy="58" r="3.5" fill="${ink}"/>`;
+    mouth=`<path d="M63 75 q7 -3 14 1" ${ln}/>`;
+    props=`<text x="106" y="34" font-size="28" font-weight="700" fill="#2E6B5E" font-family="sans-serif">?</text>`;
+  }else{
+    arms=down;
+    eyes=`<circle cx="58" cy="60" r="3.5" fill="${ink}"/><circle cx="82" cy="60" r="3.5" fill="${ink}"/>`;
+    mouth=`<path d="M63 73 q7 6 14 0" ${ln}/>`;
+  }
+  const hair=`<path d="M38 58 C37 31 53 22 70 22 C88 22 103 32 102 58 C97 43 86 38 70 38 C55 38 43 45 38 58Z" fill="${HAIR}"/>`;
+  const extra=who==='A'?`<path d="M39 50 Q70 33 101 50" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>`:`<circle cx="70" cy="21" r="11" fill="${HAIR}"/>`;
+  return `<svg viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg"><ellipse cx="70" cy="152" rx="34" ry="5" fill="#000" opacity=".06"/><rect x="56" y="124" width="11" height="24" rx="5" fill="${PANTS}"/><rect x="73" y="124" width="11" height="24" rx="5" fill="${PANTS}"/><rect x="44" y="86" width="52" height="44" rx="18" fill="${shirt}"/>${arms}<circle cx="70" cy="58" r="32" fill="${SKIN}"/>${hair}${extra}${eyes}${cheeks}${mouth}${props}</svg>`;
+}
+const SHIRT={A:'#5A6068',B:'#2E6B5E'};
+function setFig(who,pose){const el=$('svg'+who);el.innerHTML=person(who,pose,SHIRT[who]);el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
+const STAGE=[{A:'stand',B:'stand'},{A:'stand',B:'stand'},{A:'miss',B:'miss'},{A:'wait',B:'miss'},{A:'wait',B:'go'},{A:'think',B:'think'}];
+/* ---------- shared-link arrival ---------- */
+const qs=new URLSearchParams(location.search);
+const state={guess:null,what:'운동',mins:60,prob:70,rule:'monday'};
+(function(){
+  if(qs.get('s')){try{if(!localStorage.getItem('cv_seen')){localStorage.setItem('cv_seen','1');track('share_visit');}}catch(e){track('share_visit');}}
+  const m=+qs.get('m'),p=+qs.get('p'),r=qs.get('r');
+  if(m&&p&&RULES[r]){const res=ensemble(m,p/100,r);const b=$('friendBox');b.hidden=false;
+    b.innerHTML=`친구의 100일: 매일 ${m}분, '${RULES[r]}'으로 <b>계획의 ${Math.round(res.total/(m*100)*100)}%</b>를 했습니다.`;}
+})();
+
+/* ---------- intro: lines one by one, then a button ---------- */
+const INTRO=[
+  '두 사람이 100일 동안 매일 하기로 했습니다.',
+  '<b>A</b>는 매일 60분, <b>B</b>는 매일 30분.',
+  '둘 다 열흘 중 사흘은 빼먹습니다.',
+  'A는 빼먹으면 "월요일부터 다시".',
+  'B는 빼먹으면 "내일 바로 다시".',
+  '<span class="q">100일 뒤, 누가 더 많이 했을까요?</span>'
+];
+let fast=false;
+async function runIntro(){
+  const box=$('lines');box.innerHTML=INTRO.map(t=>`<p>${t}</p>`).join('');const ps=[...box.children];
+  for(let i=0;i<ps.length;i++){if(i>0)ps[i-1].classList.add('past');ps[i].classList.add('on');
+    const st=STAGE[i];
+    if(i===0){setFig('A',st.A);setFig('B',st.B);$('figA').classList.add('on');setTimeout(()=>$('figB').classList.add('on'),fast?0:250);}
+    else{if(st.A!==STAGE[i-1].A)setFig('A',st.A);if(st.B!==STAGE[i-1].B)setFig('B',st.B);}
+    await sleep(fast?200:(i===ps.length-2?1500:1100));}
+  await sleep(fast?0:300);$('introNext').classList.add('on');
+}
+$('s-intro').addEventListener('click',e=>{if(e.target.id!=='introNext')fast=true;});
+$('introNext').addEventListener('click',()=>show('s-predict'));
+$('topBtn').addEventListener('click',()=>{
+  if(current==='s-intro')show('s-predict');
+  else{const i=['s-q1','s-q2','s-q3','s-q4'].indexOf(current);if(i>0)show(['s-q1','s-q2','s-q3','s-q4'][i-1]);}
+});
+
+/* ---------- predict → race ---------- */
+const A={m:60,p:.7,r:'monday'}, B={m:30,p:.7,r:'immediate'};
+document.querySelectorAll('#s-predict .choice').forEach(b=>b.addEventListener('click',async()=>{
+  await pick(b);state.guess=b.dataset.guess;track('start',{guess:state.guess});runRace();
+}));
+async function runRace(){
+  show('s-race');
+  $('raceVerdict').hidden=true;$('toMine').hidden=true;$('laneA').classList.remove('win');$('laneB').classList.remove('win');
+  const ra=ensemble(A.m,A.p,A.r), rb=ensemble(B.m,B.p,B.r);
+  $('miniA').innerHTML=`<span class="mini">${person('A','stand',SHIRT.A)}</span><b>A</b>`;
+  $('miniB').innerHTML=`<span class="mini">${person('B','stand',SHIRT.B)}</span><b>B</b>`;
+  const ac=makeCal($('aCal')), bc=makeCal($('bCal'));
+  let at=0,bt=0;
+  for(let d=0;d<100;d++){
+    const ma=ra.rep.marks[d], mb=rb.rep.marks[d];
+    ac[d].className=cls(ma); bc[d].className=cls(mb);
+    if(ma===1)at+=A.m; if(mb===1)bt+=B.m;
+    $('aHrs').textContent=hrs(at); $('bHrs').textContent=hrs(bt);
+    if(!reduce&&d%2===1)await sleep(30);
+  }
+  $('aHrs').textContent=hrs(ra.total); $('bHrs').textContent=hrs(rb.total);
+  $('laneB').classList.add('win');
+  $('miniA').innerHTML=`<span class="mini">${person('A','wait',SHIRT.A)}</span><b>A</b>`;
+  $('miniB').innerHTML=`<span class="mini">${person('B','go',SHIRT.B)}</span><b>B</b>`;
+  const waitDays=ra.rep.marks.filter(x=>x===2).length;
+  const yours={A:'A를 고르셨어요.',B:'B를 고르셨어요. 맞혔습니다.',same:'비슷할 거라고 하셨어요.'}[state.guess];
+  const v=$('raceVerdict');v.hidden=false;
+  v.innerHTML=`<span class="yours">${yours}</span>A는 B보다 두 배로 계획했지만, 100일 뒤엔 <b>B가 더 많이</b> 했습니다. A의 100일 중 <b>${waitDays}일</b>은 빼먹은 날이 아니라 월요일을 기다린 날이었어요.`;
+  $('raceTitle').textContent='B가 더 많이 했습니다';
+  $('toMine').hidden=false;
+}
+$('toMine').addEventListener('click',()=>show('s-q1'));
+function customDone(){const v=$('whatInput').value.trim();state.what=v||'나의 목표';track('what_custom');show('s-q2');}
+$('customOk').addEventListener('click',customDone);
+$('whatInput').addEventListener('keydown',e=>{if(e.key==='Enter')customDone();});
+
+/* ---------- one question per screen ---------- */
+const ORDER=['s-q1','s-q2','s-q3','s-q4'];
+document.querySelectorAll('[data-q]').forEach(group=>group.addEventListener('click',async e=>{
+  const b=e.target.closest('.choice');if(!b)return;
+  if(b.dataset.custom){$('customBox').hidden=false;$('whatInput').focus();return;}
+  await pick(b);
+  const q=group.dataset.q, v=b.dataset.v;
+  state[q]=(q==='mins'||q==='prob')?+v:v;
+  const i=ORDER.indexOf(group.closest('.scene').id);
+  if(i<ORDER.length-1)show(ORDER[i+1]);else runResult();
+}));
+
+/* ---------- result ---------- */
+let mine=null, alt=null;
+async function runResult(){
+  show('s-result');
+  const {what,mins,prob,rule}=state, p=prob/100, plan=mins*100;
+  mine=ensemble(mins,p,rule);
+  alt=rule==='immediate'?ensemble(mins,p,'monday'):ensemble(mins,p,'immediate');
+  $('resWhat').textContent=`나의 100일 · ${what} · 매일 ${mins}분 · ${RULES[rule]}`;
+  $('resPlan').textContent=hrs(plan);
+  $('tAlt').textContent=rule==='immediate'?'월요일부터였다면':'바로 다시였다면';
+  setToggle(false);$('punch').hidden=true;setMe(.5);
+  const cells=makeCal($('myCal'));let t=0;
+  for(let d=0;d<100;d++){cells[d].className=cls(mine.rep.marks[d]);if(mine.rep.marks[d]===1)t+=mins;setBig(t,plan);if(!reduce&&d%2===1)await sleep(30);}
+  setBig(mine.total,plan);
+  setMe(mine.total/plan);
+  writePunch();$('punch').hidden=false;
+  track('complete',{rule,mins,prob});
+}
+function mePose(r){return r>=.6?'go':r>=.35?'stand':'wait';}
+function setMe(r){$('meFig').innerHTML=`<span class="me">${person('B',mePose(r),SHIRT.B)}</span>`;}
+function setBig(total,plan){$('resBig').innerHTML=`${hrs(total).replace('시간','')}<small>시간</small>`;$('resPct').textContent=`실제로 한 건 ${Math.round(total/plan*100)}%`;}
+function writePunch(){
+  const {mins,rule}=state, plan=mins*100, k=alt.total/Math.max(1,mine.total);
+  let s;
+  if(rule==='immediate')s=`빼먹어도 바로 다시 한 덕분에 계획의 <b>${Math.round(mine.total/plan*100)}%</b>를 지켰어요. '월요일부터 다시'였다면 <b>${hrs(alt.total)}</b>에 그쳤을 거예요.`;
+  else{s=`노력을 늘리지 않아도, 규칙 하나만 '내일 바로 다시'로 바꾸면 <b>${hrs(alt.total)}</b>. 지금보다 <b>${k.toFixed(1)}배</b>예요.`;
+    if(rule==='quit3')s+=` 같은 조건으로 300번 돌리면 ${Math.round(mine.quitRate*100)}%는 100일 안에 그만뒀어요.`;}
+  $('punch').innerHTML=s;
+}
+function setToggle(isAlt){$('tMine').setAttribute('aria-pressed',!isAlt);$('tAlt').setAttribute('aria-pressed',isAlt);}
+$('tMine').addEventListener('click',()=>{if(!mine)return;setToggle(false);paintCal([...$('myCal').children],mine.rep.marks);setBig(mine.total,state.mins*100);setMe(mine.total/(state.mins*100));});
+$('tAlt').addEventListener('click',()=>{if(!alt)return;setToggle(true);paintCal([...$('myCal').children],alt.rep.marks);setBig(alt.total,state.mins*100);setMe(alt.total/(state.mins*100));track('compare_toggle');});
+$('again').addEventListener('click',()=>show('s-q1'));
+
+/* ---------- share ---------- */
+function shareUrl(){const u=new URL(location.origin+location.pathname);u.searchParams.set('m',state.mins);u.searchParams.set('p',state.prob);u.searchParams.set('r',state.rule);u.searchParams.set('s',Math.random().toString(36).slice(2,8));return u.toString();}
+function shareText(){
+  const plan=state.mins*100,mk=mine.rep.marks,rows=[];
+  for(let r=0;r<10;r++)rows.push(mk.slice(r*10,r*10+10).map(m=>m===1?'🟩':m===0?'⬜':'▫️').join(''));
+  const k=state.rule==='immediate'?'':`\n규칙만 바꾸면 ${(alt.total/Math.max(1,mine.total)).toFixed(1)}배`;
+  return `꾸준함의 착시 · 나의 100일\n매일 ${state.mins}분 · ${RULES[state.rule]}\n계획 ${hrs(plan)} → 실제 ${hrs(mine.total)} (${Math.round(mine.total/plan*100)}%)\n${rows.join('\n')}${k}\n${shareUrl()}`;
+}
+$('shKakao').addEventListener('click',async()=>{
+  track('share_click',{channel:'kakao'});
+  const url=shareUrl();
+  if(CONFIG.kakaoJsKey&&window.Kakao){try{if(!Kakao.isInitialized())Kakao.init(CONFIG.kakaoJsKey);Kakao.Share.sendDefault({objectType:'text',text:`나의 100일: 계획의 ${Math.round(mine.total/(state.mins*100)*100)}%. 당신은?`,link:{mobileWebUrl:url,webUrl:url}});return;}catch(e){}}
+  if(navigator.share){try{await navigator.share({title:'꾸준함의 착시',text:'100일 뒤 누가 더 많이 했을까?',url});return;}catch(e){}}
+  toast(await copyText(url)?'링크를 복사했어요. 카톡에 붙여넣어 주세요':'복사하지 못했어요');
+});
+if(CONFIG.kakaoJsKey){const s=document.createElement('script');s.src='https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';document.head.appendChild(s);}
+
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});}
+async function drawCard(){
+  const c=$('card'),x=c.getContext('2d'),W=1080,H=1350,plan=state.mins*100;
+  const css=getComputedStyle(document.documentElement),col=n=>css.getPropertyValue(n).trim(),F='"Noto Sans KR",sans-serif';
+  x.fillStyle=col('--bg');x.fillRect(0,0,W,H);
+  x.fillStyle=col('--muted');x.font=`500 32px ${F}`;x.fillText('꾸준함의 착시 · 나의 100일',90,120);
+  x.fillStyle=col('--ink');x.font=`500 36px ${F}`;x.fillText(`${state.what} · 매일 ${state.mins}분 · ${RULES[state.rule]}`,90,175);
+  x.font=`300 150px ${F}`;const big=hrs(mine.total).replace('시간','');x.fillText(big,82,350);
+  const bw=x.measureText(big).width;x.fillStyle=col('--muted');x.font=`400 44px ${F}`;x.fillText('시간',100+bw,350);
+  x.fillText(`계획 ${hrs(plan)} 중 ${Math.round(mine.total/plan*100)}%`,90,415);
+  const size=64,gap=9,ox=90,oy=470;
+  mine.rep.marks.forEach((m,d)=>{const cx=ox+(d%10)*(size+gap),cy=oy+Math.floor(d/10)*(size+gap);
+    x.fillStyle=m===1?col('--accent'):m===0?col('--miss'):'#FFFFFF';x.beginPath();x.roundRect?x.roundRect(cx,cy,size,size,8):x.rect(cx,cy,size,size);x.fill();
+    if(m===2){x.strokeStyle=col('--line');x.lineWidth=2;x.stroke();}});
+  x.fillStyle=col('--accent');x.font=`500 40px ${F}`;
+  x.fillText(state.rule==='immediate'?'빼먹어도 다음 날 바로 다시.':`규칙만 바꾸면 ${(alt.total/Math.max(1,mine.total)).toFixed(1)}배.`,90,1365-130);
+  x.fillStyle=col('--muted');x.font=`400 26px ${F}`;x.fillText('시뮬레이션 결과이며 개인의 미래 예측이 아닙니다',90,1290);
+  try{const ch=await loadImg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(person('B',mePose(mine.total/plan),SHIRT.B)));x.drawImage(ch,790,190,210,240);}catch(e){}
+  return c.toDataURL('image/png');
+}
+$('shImg').addEventListener('click',async()=>{track('share_click',{channel:'image'});try{await document.fonts.ready;}catch(e){}$('sheetImg').src=await drawCard();$('sheet').hidden=false;});
+$('sheetSave').addEventListener('click',()=>{const a=document.createElement('a');a.href=$('sheetImg').src;a.download='my-100-days.png';document.body.appendChild(a);a.click();a.remove();});
+$('sheetClose').addEventListener('click',()=>$('sheet').hidden=true);
+$('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').hidden=true;});
+
+/* ---------- CTA ---------- */
+['ctaMain','ctaSub','ctaLink'].forEach(id=>{const a=$(id),href=CONFIG.cta[a.dataset.type];if(href){a.href=href;a.target='_blank';a.rel='noopener';}
+  a.addEventListener('click',e=>{track('cta_click',{type:a.dataset.type});if(!href){e.preventDefault();toast('링크 연결 예정입니다');}});});
+
+show('s-intro');
+runIntro();
+</script>
+</body>
+</html>
