@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>내 사업의 생존지도</title>
+<meta name="description" content="5년 전 같은 업종으로 문을 연 100곳, 지금 몇 곳이 남아 있을까? 국가데이터처 기업생멸행정통계로 보는 업종별 기록.">
+<meta property="og:title" content="내 사업의 생존지도">
+<meta property="og:description" content="5년 전 같은 업종으로 문을 연 100곳, 지금 몇 곳이 남아 있을까?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap">
+<style>
+/* Layout: a quiet street of 100 shops. One accent (lights on), soft neutrals (shutters), light type. One scene at a time. */
+:root{
+  --bg:#F5F4F0; --surface:#FFFFFF; --ink:#24272B; --muted:#80858C; --line:#E4E1DB;
+  --accent:#2E6B5E; --accent-soft:#E4EEEA; --awning:#5B8F83; --shut:#DEDAD3; --shut-top:#CFCBC3;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.app{max-width:520px;margin:0 auto;min-height:100%;padding-inline:22px;padding-block:24px 44px;display:flex;flex-direction:column}
+.brand{display:flex;justify-content:space-between;align-items:center;min-height:32px;font-size:14px;color:var(--muted)}
+.brand b{font-weight:500;color:var(--muted);font-size:14px}
+.skip{background:none;border:0;color:var(--muted);font-size:14px;cursor:pointer;padding:6px 0}
+.scene{flex:1;display:flex;flex-direction:column;justify-content:center;padding-block:24px}
+.scene[hidden]{display:none!important}
+
+.lines{display:flex;flex-direction:column;gap:12px}
+.lines p{margin:0;font-size:22px;font-weight:500;line-height:1.5;opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease,color .6s ease}
+.lines p.on{opacity:1;transform:none}
+.lines p.past{color:#A3A7AD}
+.lines p em{font-style:normal;font-weight:700;color:var(--accent)}
+.intro-next{margin-top:36px;opacity:0;transition:opacity .5s ease;pointer-events:none}
+.intro-next.on{opacity:1;pointer-events:auto}
+
+h1,h2{margin:0;font-weight:700;line-height:1.4;letter-spacing:-.02em}
+h1{font-size:24px}
+h2{font-size:22px}
+.step{font-size:13px;color:var(--muted);margin:0 0 8px}
+.help{color:var(--muted);font-size:15px;margin:8px 0 0}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:22px}
+.chip{padding:13px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:15px;font-weight:500;text-align:left;transition:border-color .15s,background .15s}
+.chip:hover{border-color:#C9C5BD}
+.chip.picked,.choice.picked{border-color:var(--accent);background:var(--accent-soft)}
+.chip.wide{grid-column:1/-1;text-align:center;color:var(--muted)}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:24px}
+.choice{padding:16px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:16px;font-weight:500;text-align:center;transition:border-color .15s,background .15s}
+.choice:hover{border-color:#C9C5BD}
+
+/* street */
+.street{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-top:16px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.shop{aspect-ratio:1/1.1;border-radius:3px;background:var(--accent);position:relative;overflow:hidden;transition:background .35s ease}
+.shop::before{content:"";position:absolute;inset:0 0 auto 0;height:28%;background:var(--awning);transition:background .35s ease}
+.shop.shut{background:var(--shut)}
+.shop.shut::before{background:var(--shut-top)}
+.cohort{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:8px}
+.result-top{display:flex;align-items:flex-end;gap:12px;margin-top:14px}
+.big{font-size:60px;font-weight:300;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.big small{font-size:18px;font-weight:400;color:var(--muted);margin-left:4px}
+.of{font-size:14px;color:var(--muted);padding-bottom:6px;line-height:1.5}
+.sentence{margin-top:14px;font-size:16px;line-height:1.75}
+.gap{margin-top:10px;padding:14px 16px;border-radius:12px;background:var(--accent-soft);font-size:16px;font-weight:500}
+.gap em{font-style:normal;color:var(--accent);font-weight:700}
+.compare{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.compare span{font-size:13px;padding:3px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.seg{display:flex;gap:4px;margin-top:16px;background:#ECE9E3;border-radius:10px;padding:3px}
+.seg button{flex:1;border:0;background:none;padding:8px 6px;border-radius:8px;font-size:14px;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.map-note{margin-top:12px;font-size:13px;color:var(--muted)}
+.disclaimer{margin-top:10px;font-size:13px;color:var(--muted)}
+.btn{display:block;width:100%;margin-top:14px;padding:15px;border-radius:12px;border:0;background:var(--ink);color:#fff;font-weight:500;font-size:16px;cursor:pointer;text-align:center;text-decoration:none}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.btn.accent{background:var(--accent);color:#fff}
+.share{margin-top:26px}
+.share h3{margin:0 0 10px;font-size:14px;color:var(--muted);font-weight:500}
+.share-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.share-row .btn{margin-top:0;font-size:15px;padding:13px 8px}
+
+.teaser{display:block;width:100%;text-align:left;margin-top:22px;padding:20px;border-radius:14px;border:0;background:var(--accent);color:#fff;cursor:pointer;font:inherit}
+.teaser .t1{display:block;font-size:13px;opacity:.75}
+.teaser b{display:block;font-size:20px;font-weight:700;margin-top:2px;line-height:1.4}
+.teaser .t2{display:block;font-size:14.5px;opacity:.9;margin-top:6px}
+.teaser .t3{display:inline-block;margin-top:14px;padding:8px 14px;border-radius:999px;background:#fff;color:var(--accent);font-size:14.5px;font-weight:700}
+.textlink{display:block;margin:16px auto 0;background:none;border:0;color:var(--muted);font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.progress{display:flex;gap:4px;margin-bottom:18px}
+.progress i{flex:1;height:3px;border-radius:2px;background:var(--line)}
+.progress i.on{background:var(--accent)}
+.mine{margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 16px}
+.mrow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+.mrow .k{font-size:14px;color:var(--muted)}
+.mrow .v{font-size:26px;font-weight:300;font-variant-numeric:tabular-nums}
+.mrow .v small{font-size:14px;color:var(--muted);margin-left:2px}
+.mrow .t{grid-column:1/-1;height:8px;border-radius:4px;background:#EEEBE6;overflow:hidden}
+.mrow .t i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.insight{margin-top:14px;padding:16px;border-radius:12px;background:var(--accent-soft);font-size:15.5px;line-height:1.7}
+.insight b{color:var(--accent)}
+.cta.dark{background:var(--ink);border:0;color:#fff}
+.cta.dark p{color:#fff}
+.cta.dark .btn{background:#fff;color:var(--ink)}
+.cta.dark .btn.ghost{background:transparent;color:#fff;border:1px solid #4A4E54}
+.cta-card{display:flex;align-items:center;gap:12px;margin-top:14px;padding:14px;border-radius:12px;background:#33373D;color:#fff;text-decoration:none;transition:background .15s}
+.cta-card:hover{background:#3B4046}
+.cc-av{flex:none;width:40px;height:40px;border-radius:50%;background:#fff;color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:16px}
+.cc-body{flex:1;min-width:0;display:flex;flex-direction:column}
+.cc-k{font-size:12.5px;color:#AEB3B9}
+.cc-t{font-size:15.5px;font-weight:700;line-height:1.4}
+.cc-go{flex:none;font-size:18px;color:#fff}
+.diff{display:flex;flex-direction:column;gap:12px;margin-top:22px}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.dcard h3{margin:0 0 8px;font-size:15px;font-weight:700}
+.bar{display:grid;grid-template-columns:80px 1fr 44px;gap:10px;align-items:center;font-size:14px;margin-top:6px}
+.bar .t{height:8px;border-radius:4px;background:#EEEBE6;overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.bar .v{font-size:14px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.dcard p{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+.cta{margin-top:20px;padding:18px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.cta p{margin:0;font-size:15.5px}
+.source{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7}
+.friend{margin-bottom:22px;padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:14px;color:var(--muted)}
+.friend b{color:var(--ink);font-weight:500}
+
+.sheet{position:fixed;inset:0;background:rgba(36,39,43,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}
+.sheet[hidden]{display:none!important}
+.sheet .inner{max-width:400px;width:100%;background:var(--surface);border-radius:14px;padding:14px}
+.sheet img{width:100%;border-radius:8px;display:block;border:1px solid var(--line)}
+.sheet p{font-size:13px;color:var(--muted);margin:10px 0 0;text-align:center}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:30;white-space:nowrap}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.lines p,.intro-next,.shop,.shop::before{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand"><b>내 사업의 생존지도</b><button class="skip" id="skipBtn" type="button">건너뛰기</button></div>
+
+  <section class="scene" id="s-intro" aria-live="polite">
+    <div class="friend" id="friendBox" hidden></div>
+    <div class="lines" id="lines"></div>
+    <button class="btn intro-next" id="introNext" type="button">확인하러 가기</button>
+  </section>
+
+  <section class="scene" id="s-pick" hidden>
+    <p class="step">1 / 2</p>
+    <h1>어떤 일을 하시나요?</h1>
+    <p class="help">준비 중인 업종도 좋아요.</p>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <section class="scene" id="s-guess" hidden>
+    <p class="step">2 / 2</p>
+    <h2 id="guessQ"></h2>
+    <p class="help" id="guessHelp"></p>
+    <div class="choices" id="guessChoices">
+      <button class="choice" type="button" data-v="80">약 80곳</button>
+      <button class="choice" type="button" data-v="60">약 60곳</button>
+      <button class="choice" type="button" data-v="40">약 40곳</button>
+      <button class="choice" type="button" data-v="20">약 20곳</button>
+    </div>
+  </section>
+
+  <section class="scene" id="s-result" hidden>
+    <p class="step" id="resLabel"></p>
+    <div class="street" id="street" aria-hidden="true"></div>
+    <div class="cohort"><span id="cohortFrom"></span><span id="cohortTo"></span></div>
+    <div class="result-top"><div class="big" id="big">100<small>곳</small></div><div class="of">100곳 중<br>남아 있던 곳</div></div>
+    <p class="sentence" id="sentence"></p>
+    <p class="gap" id="gap"></p>
+    <div class="compare" id="compare"></div>
+    <div class="seg" role="group" aria-label="기간">
+      <button type="button" data-y="1" aria-pressed="false">1년 뒤</button>
+      <button type="button" data-y="3" aria-pressed="false">3년 뒤</button>
+      <button type="button" data-y="5" aria-pressed="true">5년 뒤</button>
+    </div>
+    <p class="map-note" id="mapNote"></p>
+    <div class="disclaimer">과거에 같은 업종으로 시작한 기업들의 기록입니다. 개별 사업의 미래 확률이 아닙니다.</div>
+
+    <button class="teaser" type="button" id="toDiff">
+      <span class="t1">같은 해에 시작해도</span>
+      <b>오래 남은 곳들은 무엇이 달랐을까?</b>
+      <span class="t2">혼자 시작한 곳 100곳 중 35곳, 둘 이상이 시작한 곳 47곳</span>
+      <span class="t3">확인하러 가기 →</span>
+    </button>
+    <button class="textlink" type="button" id="otherInd">다른 업종 보기</button>
+  </section>
+
+  <section class="scene" id="s-diff" hidden>
+    <p class="step">2018년에 문을 연 100곳 중, 2023년에도 남아 있던 곳</p>
+    <h2>오래 남은 곳들의 통계상 차이</h2>
+    <p class="help">전체 업종 기준(2018년 창업 → 2023년)입니다. 이 차이가 원인이라는 뜻은 아니에요.</p>
+    <div class="diff" id="diff"></div>
+    <button class="btn accent" type="button" id="toMe">나는 어느 쪽일까? 확인하러 가기</button>
+    <button class="textlink" type="button" id="backResult">결과로 돌아가기</button>
+  </section>
+
+  <section class="scene" id="s-me1" hidden>
+    <div class="progress"><i class="on"></i><i></i></div>
+    <h2>지금 몇 명이서 하고 있나요?</h2>
+    <p class="help">준비 중이라면 시작할 때 계획 기준으로 골라 주세요.</p>
+    <div class="choices" id="teamChoices">
+      <button class="choice" type="button" data-v="solo">혼자</button>
+      <button class="choice" type="button" data-v="team">2명 이상</button>
+    </div>
+  </section>
+
+  <section class="scene" id="s-me2" hidden>
+    <div class="progress"><i class="on"></i><i class="on"></i></div>
+    <h2>대표님 나이대는요?</h2>
+    <p class="help">이 기기 밖으로 보내지 않아요.</p>
+    <div class="choices" id="ageChoices">
+      <button class="choice" type="button" data-v="0">30대 미만</button>
+      <button class="choice" type="button" data-v="1">30대</button>
+      <button class="choice" type="button" data-v="2">40대</button>
+      <button class="choice" type="button" data-v="3">50대</button>
+      <button class="choice" type="button" data-v="4">60대</button>
+      <button class="choice" type="button" data-v="5">70대 이상</button>
+    </div>
+  </section>
+
+  <section class="scene" id="s-final" hidden>
+    <p class="step">나와 비슷하게 시작한 곳들의 기록 · 5년 뒤</p>
+    <h2 id="finalTitle"></h2>
+    <div class="mine" id="mine"></div>
+    <p class="help" style="font-size:13px">세 숫자는 각각 따로 집계된 기록입니다. 합쳐서 계산한 확률이 아니에요.</p>
+    <p class="insight" id="insight"></p>
+
+    <div class="cta dark" style="margin-top:22px">
+      <p>남는 쪽에 서는 방법,<br>폐업을 막는 마케팅부터 시작해 보세요.</p>
+      <a class="btn" id="ctaMain" href="#" data-type="mkt_blog">폐업을 막는 마케팅 전략 읽기</a>
+      <a class="btn ghost" id="ctaSub" href="#" data-type="opentalk">마케팅주의자 오픈톡방 들어가기</a>
+      <a class="cta-card" id="ctaLink" href="#" data-type="haengdong"><span class="cc-av" aria-hidden="true">행</span><span class="cc-body"><span class="cc-k">행동주의자의 글</span><span class="cc-t">나를 소개합니다 · 부와 행복의 추월차선</span></span><span class="cc-go" aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="share">
+      <h3>내 생존지도 보내기</h3>
+      <div class="share-row">
+        <button class="btn accent" type="button" id="shKakao">카카오톡으로 보내기</button>
+        <button class="btn ghost" type="button" id="shImg">이미지 저장</button>
+      </div>
+    </div>
+    <button class="textlink" type="button" id="otherInd2">다른 업종도 보기</button>
+  </section>
+
+  <p class="source">출처: 국가데이터처「기업생멸행정통계」 2024년 잠정 결과(2025.10.23 공표), KOSIS 산업별 신생기업 생존율. 대상은 매출이나 상용근로자가 있는 영리기업이며, 매출과 상용근로자가 1년 이상 없으면 소멸로 봅니다. 1·3·5년 기록은 서로 다른 해에 창업한 기업들입니다. 숫자는 잠정치이며 바뀔 수 있습니다. 이 페이지는 국가데이터처가 만든 것이 아닙니다.</p>
+</div>
+
+<div class="sheet" id="sheet" hidden><div class="inner"><img id="sheetImg" alt="생존지도 결과 카드"><button class="btn" type="button" id="sheetSave">저장하기</button><button class="btn ghost" type="button" id="sheetClose">닫기</button><p>저장이 안 되면 이미지를 길게 눌러 저장하세요.</p></div></div>
+<div class="toast" id="toast" role="status"></div>
+<canvas id="card" width="1080" height="1350" hidden></canvas>
+
+<script>
+/* ---------- settings: fill these in before launch ---------- */
+const CONFIG={
+  umamiWebsiteId:"",
+  kakaoJsKey:"",
+  cta:{
+    mkt_blog:"https://blog.naver.com/godehd54/223799699931?utm_source=micro_lab&utm_medium=final_main&utm_campaign=survival",   // 마케팅주의자 블로그: 자영업자 폐업을 막는 단 하나의 마케팅 전략
+    opentalk:"https://open.kakao.com/o/sjQvlOVg?utm_source=micro_lab&utm_medium=final_sub&utm_campaign=survival",                 // 마케팅주의자 오픈톡방
+    haengdong:"https://blog.naver.com/guraud22/222099927754?utm_source=micro_lab&utm_medium=final_link&utm_campaign=survival"      // 행동주의자 블로그: 나를 소개합니다(부와 행복의 추월차선)
+  }
+};
+function track(name,data){try{if(window.umami&&umami.track)umami.track(name,data||{});}catch(e){} if(location.hostname==='localhost'||location.protocol==='file:')console.log('[event]',name,data||'');}
+if(CONFIG.umamiWebsiteId){const s=document.createElement('script');s.defer=true;s.src='https://cloud.umami.is/script.js';s.dataset.websiteId=CONFIG.umamiWebsiteId;document.head.appendChild(s);}
+
+/* ---------- data: 2023p survival (%) — replace on 2026-10-22 release ---------- */
+const DATA_YEAR=2023;
+const IND={
+ "전산업":{1:64.4,3:45.9,5:36.4},"농림어업":{1:50.8,3:39.0,5:29.5},"광업":{1:54.4,3:29.9,5:18.8},"제조업":{1:69.8,3:52.5,5:46.4},
+ "전기·가스·증기":{1:88.0,3:84.3,5:79.1},"수도·하수·폐기":{1:75.6,3:63.5,5:55.1},"건설업":{1:67.3,3:52.2,5:41.6},"도·소매업":{1:55.2,3:39.8,5:32.1},
+ "운수·창고업":{1:73.5,3:56.9,5:47.9},"숙박·음식점업":{1:66.9,3:40.2,5:27.2},"정보통신업":{1:61.1,3:48.2,5:38.7},"금융·보험업":{1:56.6,3:33.9,5:26.6},
+ "부동산업":{1:65.9,3:46.1,5:39.6},"전문·과학·기술":{1:64.2,3:50.2,5:41.6},"사업시설관리":{1:61.3,3:41.1,5:30.2},"교육서비스업":{1:63.5,3:45.3,5:35.1},
+ "보건·사회복지":{1:84.6,3:73.9,5:62.9},"예술·스포츠·여가":{1:67.2,3:42.5,5:26.8},"개인서비스업":{1:68.0,3:49.3,5:38.3}
+};
+const PICKS=[
+ ["food","식당·카페·숙박","숙박·음식점업","호텔과 분식집이 한 분류에 함께 들어 있어요."],
+ ["retail","쇼핑몰·소매점","도·소매업","온라인 쇼핑몰과 동네 가게, 도매상이 함께 들어 있어요."],
+ ["beauty","미용·네일·세탁","개인서비스업","미용실, 세탁소, 수리점 등이 함께 들어 있어요."],
+ ["edu","학원·교습소","교육서비스업","학원, 교습소, 직업훈련 등이 함께 들어 있어요."],
+ ["leisure","헬스·PC방·스튜디오","예술·스포츠·여가","헬스장, PC방, 공연·창작 등이 함께 들어 있어요."],
+ ["health","병원·요양시설","보건·사회복지","병·의원, 요양시설, 복지시설이 함께 들어 있어요."],
+ ["it","앱·콘텐츠·출판","정보통신업","소프트웨어, 출판, 영상 제작 등이 함께 들어 있어요."],
+ ["pro","광고·디자인·컨설팅","전문·과학·기술","광고, 디자인, 컨설팅, 연구개발 등이 함께 들어 있어요."],
+ ["mfg","공장·공방 제조","제조업","대형 공장과 작은 공방이 함께 들어 있어요."],
+ ["build","인테리어·건설","건설업","종합건설과 인테리어 같은 전문공사가 함께 들어 있어요."],
+ ["transport","화물·택배·운송","운수·창고업","화물, 택배, 개인 운송, 창고업이 함께 들어 있어요."],
+ ["facility","청소·방역·인력","사업시설관리","청소, 방역, 인력 공급, 경비 등이 함께 들어 있어요."],
+ ["realty","부동산 중개·임대","부동산업","중개업과 임대사업자가 함께 들어 있어요."],
+ ["farm","농장·어업","농림어업","농업, 임업, 어업이 함께 들어 있어요."],
+ ["all","전체 평균","전산업","모든 업종을 합친 숫자예요."]
+];
+const COHORT={1:DATA_YEAR-1,3:DATA_YEAR-3,5:DATA_YEAR-5};
+const DIFF=[
+  {t:"혼자 vs 함께",rows:[["1인 기업",35.1],["2인 이상",47.2]],note:"종사자가 한 명뿐인 곳보다 두 명 이상인 곳이 더 많이 남았습니다."},
+  {t:"개인 vs 법인",rows:[["개인사업자",35.9],["법인",43.0]],note:"법인으로 시작한 곳이 조금 더 많이 남았습니다."},
+  {t:"대표자 나이",rows:[["30대 미만",26.7],["30대",35.3],["40대",39.2],["50대",38.4],["60대",36.3],["70대 이상",29.8]],note:"40~50대에 시작한 곳이 가장 많이 남았습니다."}
+];
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+function show(id){document.querySelectorAll('.scene').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0);$('skipBtn').hidden=id!=='s-intro';}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2200);}
+async function copyText(text){try{await navigator.clipboard.writeText(text);return true;}catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}ta.remove();return ok;}}
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const ORDER=(()=>{const r=rng(2018),o=[...Array(100).keys()];for(let i=99;i>0;i--){const j=Math.floor(r()*(i+1));[o[i],o[j]]=[o[j],o[i]];}return o;})(); // which shops close first
+const state={pick:null,guess:null,y:5};
+const P=()=>PICKS.find(p=>p[0]===state.pick);
+const val=(ind,y)=>IND[ind][y];
+const n=(ind,y)=>Math.round(val(ind,y));
+function rankOf(ind,y){const all=Object.keys(IND).filter(k=>k!=="전산업").sort((a,b)=>val(b,y)-val(a,y));return{rank:all.indexOf(ind)+1,total:all.length};}
+
+/* ---------- shared-link arrival ---------- */
+const qs=new URLSearchParams(location.search);
+(function(){
+  if(qs.get('s')){try{if(!localStorage.getItem('sv_seen')){localStorage.setItem('sv_seen','1');track('share_visit');}}catch(e){track('share_visit');}}
+  const p=PICKS.find(x=>x[0]===qs.get('i')), y=[1,3,5].includes(+qs.get('y'))?+qs.get('y'):5;
+  if(p){const b=$('friendBox');b.hidden=false;b.innerHTML=`친구가 본 업종: <b>${p[1]}</b>. ${COHORT[y]}년에 생긴 100곳 중 <b>${n(p[2],y)}곳</b>이 ${DATA_YEAR}년에도 남아 있었습니다. 당신의 업종은요?`;}
+})();
+
+/* ---------- intro ---------- */
+const INTRO=[
+  '지난 한 해, 새로 생긴 사업체는 <em>92만 곳</em>.',
+  '그럼 5년 전에 문을 연 곳들은',
+  '지금 몇 곳이나 남아 있을까요?'
+];
+let introDone=false,fast=false;
+async function runIntro(){
+  const box=$('lines');box.innerHTML=INTRO.map(t=>`<p>${t}</p>`).join('');const ps=[...box.children];
+  for(let i=0;i<ps.length;i++){if(introDone)return;if(i===1)ps[0].classList.add('past');ps[i].classList.add('on');await sleep(fast?200:1200);}
+  await sleep(fast?0:300);$('introNext').classList.add('on');
+}
+function endIntro(){if(introDone)return;introDone=true;show('s-pick');}
+$('s-intro').addEventListener('click',e=>{if(e.target.id!=='introNext')fast=true;});
+$('introNext').addEventListener('click',endIntro);
+$('skipBtn').addEventListener('click',endIntro);
+
+/* ---------- pick → guess ---------- */
+$('chips').innerHTML=PICKS.map(p=>`<button class="chip${p[0]==='all'?' wide':''}" type="button" data-k="${p[0]}">${p[1]}</button>`).join('');
+async function pick(btn){btn.classList.add('picked');await sleep(180);btn.classList.remove('picked');}
+$('chips').addEventListener('click',async e=>{
+  const b=e.target.closest('.chip');if(!b)return;await pick(b);
+  state.pick=b.dataset.k;track('start',{industry:state.pick});
+  const p=P();
+  $('guessQ').innerHTML=`${COHORT[5]}년에 새로 생긴<br>${p[1]} 100곳.`;
+  $('guessHelp').textContent=`${DATA_YEAR}년에도 남아 있던 곳은 몇 곳일까요?`;
+  show('s-guess');
+});
+$('guessChoices').addEventListener('click',async e=>{const b=e.target.closest('.choice');if(!b)return;await pick(b);state.guess=+b.dataset.v;state.y=5;runResult(true);});
+
+/* ---------- result ---------- */
+const shops=(()=>{const s=$('street');s.innerHTML='<div class="shop"></div>'.repeat(100);return [...s.children];})();
+function setShops(open){const keep=new Set(ORDER.slice(0,open));shops.forEach((el,i)=>el.classList.toggle('shut',!keep.has(i)));}
+async function animateTo(open){
+  shops.forEach(el=>el.classList.remove('shut'));
+  $('big').innerHTML=`100<small>곳</small>`;
+  await sleep(500);
+  const closing=ORDER.slice(open).reverse();
+  for(let k=0;k<closing.length;k++){shops[closing[k]].classList.add('shut');$('big').innerHTML=`${100-k-1}<small>곳</small>`;if(k%2===1)await sleep(Math.max(12,40-k*0.4));}
+  $('big').innerHTML=`${open}<small>곳</small>`;
+}
+async function runResult(first){
+  show('s-result');
+  const [k,label,ind,mapNote]=P(), y=state.y, v=val(ind,y), cnt=n(ind,y), avg=n("전산업",y);
+  $('resLabel').textContent=`${label} · ${y}년 뒤`;
+  $('cohortFrom').textContent=`${COHORT[y]}년에 문을 연 100곳`;$('cohortTo').textContent=`${DATA_YEAR}년`;
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.y===y));
+  $('sentence').textContent=`${COHORT[y]}년에 새로 생긴 ${ind==="전산업"?"기업":ind+" 기업"} 100곳 중 ${DATA_YEAR}년에도 남아 있던 곳은 ${cnt}곳이었습니다. (${v.toFixed(1)}%)`;
+  let gap='';
+  if(y===5&&state.guess!=null){const d=cnt-state.guess;gap=Math.abs(d)<=5?`예상하신 약 ${state.guess}곳과 거의 같습니다.`:d<0?`예상하신 약 ${state.guess}곳보다 <em>${-d}곳 적습니다</em>.`:`예상하신 약 ${state.guess}곳보다 <em>${d}곳 많습니다</em>.`;}
+  else gap=`${100-cnt}곳은 ${y}년을 넘기지 못했습니다.`;
+  $('gap').innerHTML=gap;
+  const cmp=[];
+  if(ind!=="전산업"){const r=rankOf(ind,y);cmp.push(`전체 평균 ${avg}곳 (${cnt-avg>=0?'+':''}${cnt-avg})`,`${r.total}개 업종 중 ${r.rank}위`);}
+  else{const all=Object.keys(IND).filter(k=>k!=="전산업").map(k=>n(k,y));cmp.push(`업종별 ${Math.min(...all)}~${Math.max(...all)}곳`);}
+  $('compare').innerHTML=cmp.map(c=>`<span>${c}</span>`).join('');
+  $('mapNote').textContent=ind==="전산업"?mapNote:`'${label}'은 통계의 '${ind}' 전체 기준입니다. ${mapNote}`;
+  if(first)await animateTo(cnt);else setShops(cnt);
+  $('big').innerHTML=`${cnt}<small>곳</small>`;
+  if(first)track('complete',{industry:k});
+}
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{state.y=+b.dataset.y;runResult(false);track('period',{y:state.y});}));
+$('otherInd').addEventListener('click',()=>show('s-pick'));
+$('toDiff').addEventListener('click',()=>{
+  $('diff').innerHTML=DIFF.map(d=>`<div class="dcard"><h3>${d.t}</h3>${d.rows.map(([l,v])=>`<div class="bar"><span>${l}</span><span class="t"><i style="width:${v}%"></i></span><span class="v">${Math.round(v)}곳</span></div>`).join('')}<p>${d.note}</p></div>`).join('');
+  show('s-diff');track('diff_view');
+});
+$('backResult').addEventListener('click',()=>runResult(false));
+$('otherInd2').addEventListener('click',()=>show('s-pick'));
+const AGES=DIFF[2].rows;
+const me={team:null,age:null};
+$('toMe').addEventListener('click',()=>{show('s-me1');track('me_start');});
+$('teamChoices').addEventListener('click',async e=>{const b=e.target.closest('.choice');if(!b)return;await pick(b);me.team=b.dataset.v;show('s-me2');});
+$('ageChoices').addEventListener('click',async e=>{const b=e.target.closest('.choice');if(!b)return;await pick(b);me.age=+b.dataset.v;runFinal();});
+function runFinal(){
+  const [k,label,ind]=P(), y=5;
+  const indN=n(ind,y), teamV=me.team==='solo'?35.1:47.2, otherV=me.team==='solo'?47.2:35.1;
+  const [ageL,ageV]=AGES[me.age], best=AGES.reduce((a,b)=>b[1]>a[1]?b:a);
+  $('finalTitle').textContent=`${label} · ${me.team==='solo'?'혼자':'2명 이상'} · ${ageL}`;
+  const rows=[[`${label}로 시작한 곳`,indN],[`${me.team==='solo'?'혼자':'둘 이상이'} 시작한 곳`,Math.round(teamV)],[`대표가 ${ageL}였던 곳`,Math.round(ageV)]];
+  $('mine').innerHTML=rows.map(([l,v])=>`<div class="mrow"><span class="k">${l}</span><span class="v">${v}<small>곳</small></span><span class="t"><i style="width:${v}%"></i></span></div>`).join('');
+  const d=Math.round(otherV)-Math.round(teamV);
+  let msg=me.team==='solo'
+    ?`혼자 시작한 곳은 둘 이상이 시작한 곳보다 100곳 중 <b>${d}곳 덜</b> 남았습니다.`
+    :`둘 이상이 시작한 곳은 혼자 시작한 곳보다 100곳 중 <b>${-d}곳 더</b> 남았습니다.`;
+  msg+=ageL===best[0]?` 그리고 ${ageL}는 가장 많이 남은 나이대입니다.`:` 가장 많이 남은 나이대는 <b>${best[0]}(${Math.round(best[1])}곳)</b>였습니다.`;
+  if(me.team==='solo')msg+=` 혼자라면 무엇을 덜어내고 누구와 나눌지가 중요한 질문이 됩니다.`;
+  $('insight').innerHTML=msg;
+  show('s-final');track('me_complete',{industry:k});
+}
+
+/* ---------- share ---------- */
+function shareUrl(){const u=new URL(location.origin+location.pathname);u.searchParams.set('i',state.pick);u.searchParams.set('y',state.y);u.searchParams.set('s',Math.random().toString(36).slice(2,8));return u.toString();}
+function shareText(){
+  const [k,label,ind]=P(),y=state.y,cnt=n(ind,y),keep=new Set(ORDER.slice(0,cnt)),rows=[];
+  for(let r=0;r<10;r++){let s='';for(let c=0;c<10;c++)s+=keep.has(r*10+c)?'🟨':'⬛';rows.push(s);}
+  return `내 사업의 생존지도\n${COHORT[y]}년에 새로 생긴 ${label} 100곳 중\n${DATA_YEAR}년에도 남아 있던 곳: ${cnt}곳\n${rows.join('\n')}\n출처: 국가데이터처 기업생멸행정통계\n${shareUrl()}`;
+}
+$('shKakao').addEventListener('click',async()=>{
+  track('share_click',{channel:'kakao'});
+  const url=shareUrl(),[k,label,ind]=P(),cnt=n(ind,state.y);
+  if(CONFIG.kakaoJsKey&&window.Kakao){try{if(!Kakao.isInitialized())Kakao.init(CONFIG.kakaoJsKey);Kakao.Share.sendDefault({objectType:'text',text:`${COHORT[state.y]}년에 생긴 ${label} 100곳 중 ${DATA_YEAR}년에 남은 곳은 ${cnt}곳. 당신 업종은?`,link:{mobileWebUrl:url,webUrl:url}});return;}catch(e){}}
+  if(navigator.share){try{await navigator.share({title:'내 사업의 생존지도',text:`${label} 100곳 중 ${cnt}곳`,url});return;}catch(e){}}
+  toast(await copyText(url)?'링크를 복사했어요. 카톡에 붙여넣어 주세요':'복사하지 못했어요');
+});
+if(CONFIG.kakaoJsKey){const s=document.createElement('script');s.src='https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';document.head.appendChild(s);}
+
+function drawCard(){
+  const c=$('card'),x=c.getContext('2d'),W=1080,H=1350,F='"Noto Sans KR",sans-serif';
+  const css=getComputedStyle(document.documentElement),col=k=>css.getPropertyValue(k).trim();
+  const [k,label,ind]=P(),y=state.y,cnt=n(ind,y),keep=new Set(ORDER.slice(0,cnt));
+  x.fillStyle=col('--bg');x.fillRect(0,0,W,H);
+  x.fillStyle=col('--muted');x.font=`500 32px ${F}`;x.fillText(`내 사업의 생존지도 · ${COHORT[y]}년에 문을 연`,90,115);
+  x.fillStyle=col('--ink');x.font=`700 52px ${F}`;x.fillText(`${label} 100곳`,90,185);
+  const size=64,gap=9,gw=size*10+gap*9,ox=(W-gw)/2,oy=250;
+  x.fillStyle='#FFFFFF';x.fillRect(ox-24,oy-24,gw+48,gw+48);
+  for(let i=0;i<100;i++){const cx=ox+(i%10)*(size+gap),cy=oy+Math.floor(i/10)*(size+gap),h=size;
+    const open=keep.has(i);x.fillStyle=open?col('--accent'):col('--shut');x.fillRect(cx,cy,size,h);
+    x.fillStyle=open?col('--awning'):col('--shut-top');x.fillRect(cx,cy,size,h*.28);}
+  const ty=oy+gw+170;
+  x.fillStyle=col('--ink');x.font=`300 150px ${F}`;x.fillText(String(cnt),82,ty);
+  const w=x.measureText(String(cnt)).width;x.fillStyle=col('--muted');x.font=`400 40px ${F}`;x.fillText(`곳이 ${DATA_YEAR}년에도 남아 있었습니다`,100+w,ty);
+  x.font=`400 24px ${F}`;
+  x.fillText(`출처: 국가데이터처 기업생멸행정통계 · '${ind}' 전체 기준`,90,H-78);
+  x.fillText('과거 기록이며 개별 사업의 미래 확률이 아닙니다',90,H-42);
+  return c.toDataURL('image/png');
+}
+$('shImg').addEventListener('click',async()=>{track('share_click',{channel:'image'});try{await document.fonts.ready;}catch(e){}$('sheetImg').src=drawCard();$('sheet').hidden=false;});
+$('sheetSave').addEventListener('click',()=>{const a=document.createElement('a');a.href=$('sheetImg').src;a.download='survival-map.png';document.body.appendChild(a);a.click();a.remove();});
+$('sheetClose').addEventListener('click',()=>$('sheet').hidden=true);
+$('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').hidden=true;});
+
+/* ---------- CTA ---------- */
+['ctaMain','ctaSub','ctaLink'].forEach(id=>{const a=$(id),href=CONFIG.cta[a.dataset.type];if(href){a.href=href;a.target='_blank';a.rel='noopener';}
+  a.addEventListener('click',e=>{track('cta_click',{type:a.dataset.type});if(!href){e.preventDefault();toast('링크 연결 예정입니다');}});});
+
+runIntro();
+</script>
+</body>
+</html>
