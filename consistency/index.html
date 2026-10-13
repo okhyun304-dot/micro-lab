@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>꾸준함의 착시</title>
-<meta name="description" content="매일 60분 vs 매일 30분. 100일 뒤 누가 더 많이 했을까? 빼먹은 다음 날의 규칙 하나가 100일을 바꿉니다.">
+<meta name="description" content="같은 30분, 같은 확률. 빼먹은 다음 날의 규칙만 다른 두 사람의 100일 가상 시뮬레이션.">
 <meta property="og:title" content="꾸준함의 착시">
-<meta property="og:description" content="매일 60분 vs 매일 30분. 100일 뒤 누가 더 많이 했을까?">
+<meta property="og:description" content="같은 30분, 같은 확률. 규칙만 다르면 100일 뒤 차이는 얼마나 될까?">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap">
@@ -126,6 +126,18 @@ h2{font-size:22px}
 .cc-k{font-size:12.5px;color:var(--muted)}
 .cc-t{font-size:15.5px;font-weight:700;line-height:1.4}
 .cc-go{flex:none;font-size:18px;color:var(--accent)}
+.assume{margin-top:16px;font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.assume summary{cursor:pointer;font-weight:500;color:var(--ink)}
+.assume ul{margin:8px 0 0;padding-left:18px;line-height:1.7}
+.assume b{color:var(--ink);font-weight:500}
+.type-head{display:flex;align-items:center;gap:12px;margin-top:4px}
+.type-k{margin:0;font-size:13px;color:var(--muted)}
+.type-name{margin:2px 0 0;font-size:26px;font-weight:700;line-height:1.3}
+.type-line{margin:4px 0 0;font-size:15px;color:var(--accent);font-weight:500}
+.type-note{margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+.sim-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-top:14px;font-size:14px;color:var(--muted)}
+.sim-row b{font-size:22px;font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
+.testpill{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;z-index:40;background:#B3261E;color:#fff;font-size:12px;padding:3px 10px;border-radius:999px}
 .note{margin-top:26px;font-size:12.5px;color:var(--muted);line-height:1.7}
 .friend{margin-bottom:22px;padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:14px;color:var(--muted)}
 .friend b{color:var(--ink);font-weight:500}
@@ -147,7 +159,7 @@ h2{font-size:22px}
   <section class="scene" id="s-intro" aria-live="polite">
     <div class="friend" id="friendBox" hidden></div>
     <div class="stage" aria-hidden="true">
-      <div class="fig" id="figA"><div id="svgA"></div><span class="tag"><b>A</b> · 매일 60분</span></div>
+      <div class="fig" id="figA"><div id="svgA"></div><span class="tag"><b>A</b> · 매일 30분</span></div>
       <div class="fig" id="figB"><div id="svgB"></div><span class="tag"><b>B</b> · 매일 30분</span></div>
     </div>
     <div class="lines" id="lines"></div>
@@ -155,12 +167,12 @@ h2{font-size:22px}
   </section>
 
   <section class="scene" id="s-predict" hidden>
-    <p class="eyebrow">100일 뒤, 누가 더 많이 했을까?</p>
-    <h1>당신의 예상은?</h1>
+    <p class="eyebrow">같은 30분, 같은 열흘 중 7일. 규칙만 달라요.</p>
+    <h1>100일 뒤 두 사람의 차이는?</h1>
     <div class="choices">
-      <button class="choice" type="button" data-guess="A"><span>A<small>매일 60분 · 빼먹으면 월요일부터 다시</small></span></button>
-      <button class="choice" type="button" data-guess="B"><span>B<small>매일 30분 · 빼먹으면 내일 바로 다시</small></span></button>
-      <button class="choice" type="button" data-guess="same"><span>비슷할 것 같다</span></button>
+      <button class="choice" type="button" data-guess="same"><span>거의 같다<small>규칙 하나로는 큰 차이가 없을 것</small></span></button>
+      <button class="choice" type="button" data-guess="small"><span>조금 차이 난다<small>1.5배 미만</small></span></button>
+      <button class="choice" type="button" data-guess="big"><span>크게 차이 난다<small>1.5배 이상</small></span></button>
     </div>
   </section>
 
@@ -168,11 +180,20 @@ h2{font-size:22px}
     <p class="eyebrow">100일 동안의 달력</p>
     <h2 id="raceTitle">두 사람의 100일</h2>
     <div class="race">
-      <div class="lane" id="laneA"><div class="who"><span class="nm" id="miniA"></span><span>60분 · 월요일부터</span></div><div class="hrs" id="aHrs">0시간</div><div class="cal" id="aCal"></div></div>
-      <div class="lane" id="laneB"><div class="who"><span class="nm" id="miniB"></span><span>30분 · 바로 다시</span></div><div class="hrs" id="bHrs">0시간</div><div class="cal" id="bCal"></div></div>
+      <div class="lane" id="laneA"><div class="who"><span class="nm" id="miniA"></span><span>월요일부터</span></div><div class="hrs" id="aHrs">0시간</div><div class="cal" id="aCal"></div></div>
+      <div class="lane" id="laneB"><div class="who"><span class="nm" id="miniB"></span><span>바로 다시</span></div><div class="hrs" id="bHrs">0시간</div><div class="cal" id="bCal"></div></div>
     </div>
     <div class="legend"><span><i class="ld"></i>한 날</span><span><i class="lm"></i>빼먹은 날</span><span><i class="lw"></i>월요일을 기다린 날</span></div>
     <p class="verdict" id="raceVerdict" hidden></p>
+    <details class="assume"><summary>이 시뮬레이션의 가정</summary><ul>
+<li>하루에 한 번, 정한 확률(예: 열흘 중 7일 = 70%)로 그날 할지 말지가 정해집니다.</li>
+<li><b>바로 다시</b>: 빼먹은 다음 날에도 확률이 그대로입니다.</li>
+<li><b>월요일부터 다시</b>: 한 번 빼먹으면 다음 월요일까지 쉽니다(1일차 = 월요일). 월요일에 다시 시작할 때 의욕이 오르는 '새 출발 효과'는 넣지 않았습니다. 그래서 같은 날 같은 확률이라면 '월요일부터 다시'는 쉬는 날만큼 줄어들 뿐, '바로 다시'보다 많아질 수 없습니다. 이 결과는 이 가정에서 나온 것입니다.</li>
+<li><b>자책하다 더 미룸</b>: 빼먹을 때마다 다음 날 확률이 15%p씩 낮아지고, 한 번 하면 원래대로 돌아옵니다. 15%p는 게임 규칙으로 정한 값입니다.</li>
+<li><b>사흘 빼먹으면 그만</b>: 사흘 연속 빼먹으면 이후로 하지 않습니다. 게임 규칙입니다.</li>
+<li>같은 조건으로 100일을 300번 반복해 가운데 값을 보여줍니다. 달력은 그 값에 가장 가까운 1회입니다.</li>
+<li>실제 사람의 행동은 이보다 복잡합니다. 개인의 미래를 예측하는 계산이 아닙니다.</li>
+</ul></details>
     <button class="btn" id="toMine" type="button" hidden>내 100일 확인하러 가기</button>
   </section>
 
@@ -232,10 +253,9 @@ h2{font-size:22px}
 
   <section class="scene" id="s-result" hidden>
     <p class="eyebrow" id="resWhat">나의 100일</p>
-    <div class="result-head">
-      <div style="display:flex;align-items:flex-end;gap:10px"><span id="meFig"></span><div class="big" id="resBig">0<small>시간</small></div></div>
-      <div class="plan">계획<b id="resPlan">100시간</b><span id="resPct"></span></div>
-    </div>
+    <div class="type-head"><span id="meFig"></span><div><p class="type-k">내가 고른 재시작 규칙</p><h2 class="type-name" id="typeName"></h2><p class="type-line" id="typeLine"></p></div></div>
+    <p class="type-note">고른 규칙에 붙인 이름이에요. 성격이나 심리를 진단하는 결과가 아닙니다.</p>
+    <div class="sim-row"><span>이 규칙으로 가상 100일</span><b id="resBig">0시간</b><span id="resPct"></span></div>
     <div class="seg" role="group" aria-label="규칙 비교">
       <button type="button" id="tMine" aria-pressed="true">내 규칙</button>
       <button type="button" id="tAlt" aria-pressed="false">바로 다시였다면</button>
@@ -243,6 +263,15 @@ h2{font-size:22px}
     <div class="mycal"><div class="cal" id="myCal"></div></div>
     <div class="legend"><span><i class="ld"></i>한 날</span><span><i class="lm"></i>빼먹은 날</span><span><i class="lw"></i>규칙 때문에 쉰 날</span></div>
     <p class="punch" id="punch"></p>
+    <details class="assume"><summary>이 시뮬레이션의 가정</summary><ul>
+<li>하루에 한 번, 정한 확률(예: 열흘 중 7일 = 70%)로 그날 할지 말지가 정해집니다.</li>
+<li><b>바로 다시</b>: 빼먹은 다음 날에도 확률이 그대로입니다.</li>
+<li><b>월요일부터 다시</b>: 한 번 빼먹으면 다음 월요일까지 쉽니다(1일차 = 월요일). 월요일에 다시 시작할 때 의욕이 오르는 '새 출발 효과'는 넣지 않았습니다. 그래서 같은 날 같은 확률이라면 '월요일부터 다시'는 쉬는 날만큼 줄어들 뿐, '바로 다시'보다 많아질 수 없습니다. 이 결과는 이 가정에서 나온 것입니다.</li>
+<li><b>자책하다 더 미룸</b>: 빼먹을 때마다 다음 날 확률이 15%p씩 낮아지고, 한 번 하면 원래대로 돌아옵니다. 15%p는 게임 규칙으로 정한 값입니다.</li>
+<li><b>사흘 빼먹으면 그만</b>: 사흘 연속 빼먹으면 이후로 하지 않습니다. 게임 규칙입니다.</li>
+<li>같은 조건으로 100일을 300번 반복해 가운데 값을 보여줍니다. 달력은 그 값에 가장 가까운 1회입니다.</li>
+<li>실제 사람의 행동은 이보다 복잡합니다. 개인의 미래를 예측하는 계산이 아닙니다.</li>
+</ul></details>
 
     <div class="block">
       <h3>내 100일 보내기</h3>
@@ -253,14 +282,14 @@ h2{font-size:22px}
     </div>
 
     <div class="block cta">
-      <p>빼먹어도 다음 날 다시 쓰는 사람들. 21일 동안 매일 블로그를 쓰는 「블로그 전사」를 모집하고 있어요.</p>
-      <a class="btn" id="ctaMain" href="#" data-type="mkt_blog">블로그 전사 모집글 보기</a>
+      <p id="ctaText"></p>
+      <a class="btn" id="ctaMain" href="#" data-type=""></a>
       <a class="btn line" id="ctaSub" href="#" data-type="opentalk">마케팅주의자 오픈톡방 들어가기</a>
       <a class="cta-card" id="ctaLink" href="#" data-type="haengdong"><span class="cc-av" aria-hidden="true">행</span><span class="cc-body"><span class="cc-k">행동주의자의 글</span><span class="cc-t">나를 소개합니다 · 부와 행복의 추월차선</span></span><span class="cc-go" aria-hidden="true">→</span></a>
     </div>
 
     <button class="btn line" type="button" id="again">다시 해보기</button>
-    <p class="note">같은 조건으로 100일을 300번 돌려 가운데 값을 보여줍니다. 달력은 그중 대표 한 번입니다. 개인의 미래를 예측하는 계산이 아니라, 규칙에 따라 결과가 얼마나 달라지는지 보여주는 시뮬레이션입니다. 참고: Lally 외(2010)는 습관이 자리 잡는 데 중앙값 66일이 걸렸고, 한 번 빼먹은 것은 습관 형성에 큰 영향을 주지 않았다고 보고했습니다. 입력한 값은 이 기기 밖으로 나가지 않습니다.</p>
+    <p class="note">가상 시뮬레이션입니다. 개인의 미래를 예측하는 계산이 아니라, 규칙에 따라 결과가 얼마나 달라지는지 보여줍니다. 참고: Lally 외(2010)는 습관이 자리 잡는 데 중앙값 66일이 걸렸고, 한 번 빼먹은 것은 습관 형성에 큰 영향을 주지 않았다고 보고했습니다. 입력한 값은 이 기기 밖으로 나가지 않습니다.</p>
   </section>
 </div>
 
@@ -271,18 +300,44 @@ h2{font-size:22px}
 <script>
 /* ---------- settings: fill these in before launch ---------- */
 const CONFIG={
-  umamiWebsiteId:"",          // Umami Cloud 사이트 ID
-  kakaoJsKey:"",              // Kakao Developers JavaScript 키
-  cta:{
-    mkt_blog:"https://blog.naver.com/godehd54/224285040737?utm_source=micro_lab&utm_medium=result_main&utm_campaign=consistency",  // 마케팅주의자 블로그: [모집] 블로그 전사 (21일 블로그 글쓰기)
-    opentalk:"https://open.kakao.com/o/sjQvlOVg?utm_source=micro_lab&utm_medium=result_sub&utm_campaign=consistency",               // 마케팅주의자 오픈톡방
-    haengdong:"https://blog.naver.com/guraud22/222099927754?utm_source=micro_lab&utm_medium=result_link&utm_campaign=consistency"    // 행동주의자 블로그: 나를 소개합니다(부와 행복의 추월차선)
+  umamiWebsiteId:"7b5f85ea-0244-4a1b-97fb-92e3cdfba938",                         // Umami Website ID (공개 식별자, 비밀 아님)
+  umamiDomains:"okhyun304-dot.github.io",   // 이 도메인에서 열렸을 때만 집계
+  kakaoJsKey:"",                             // Kakao Developers JavaScript 키
+  // 목표별 연결. 맞는 콘텐츠가 없는 목표에는 모집글을 붙이지 않습니다.
+  goals:{
+    blog:{match:["블로그 글쓰기"],main:{type:"blog_recruit",url:"https://blog.naver.com/godehd54/224285040737",label:"블로그 전사 모집글 보기"},sub:true,
+          text:"빼먹어도 다음 날 다시 쓰는 사람들. 21일 동안 매일 블로그를 쓰는 「블로그 전사」를 모집하고 있어요."},       // [모집] 블로그 전사 1기
+    insta:{match:["인스타·숏폼"],main:{type:"mkt_insta",url:"https://blog.naver.com/godehd54/224246696080",label:"「인스타그램 릴스 조회수 300만」 읽기"},sub:true,
+          text:"인스타·숏폼을 꾸준히 올리려는 분께, 마케팅주의자가 직접 해본 릴스 이야기예요."},                              // 인스타그램 릴스 조회수 수익, 영상 2개만에 조회수 300만 찍기
+    sales:{match:["영업 연락"],main:{type:"mkt_sales",url:"https://blog.naver.com/godehd54/224262912799",label:"「영업은 구원이다」 읽기"},sub:true,
+          text:"영업 연락을 꾸준히 하려는 분께, 마케팅주의자의 영업 이야기예요."},                                              // 영업은 구원이다.
+    general:{match:[],main:null,sub:false,
+          text:"빼먹은 다음 날 어떻게 다시 시작할지, 행동주의자의 이야기를 읽어 보세요."}                                       // 운동·독서·공부·직접 입력 등
+  },
+  links:{
+    opentalk:"https://open.kakao.com/o/sjQvlOVg",            // 마케팅주의자 오픈톡방
+    haengdong:"https://blog.naver.com/guraud22/222099927754"  // 행동주의자 블로그: 나를 소개합니다(부와 행복의 추월차선)
   }
 };
 
-/* ---------- anonymous events ---------- */
-function track(name,data){try{if(window.umami&&umami.track)umami.track(name,data||{});}catch(e){} if(location.hostname==='localhost'||location.protocol==='file:')console.log('[event]',name,data||'');}
-if(CONFIG.umamiWebsiteId){const s=document.createElement('script');s.defer=true;s.src='https://cloud.umami.is/script.js';s.dataset.websiteId=CONFIG.umamiWebsiteId;document.head.appendChild(s);}
+/* ---------- anonymous events (Umami) ----------
+   - 모든 이벤트에 svc(서비스 이름)를 붙여 한 사이트 ID 안에서 두 실험을 나눠 봅니다.
+   - Umami 스크립트가 로드되기 전 이벤트는 대기열에 모았다가 로드 직후 보냅니다.
+   - 직접 입력한 목표 문장은 어떤 이벤트에도 싣지 않습니다(목표는 blog/insta/sales/general 그룹으로만).
+   - 테스트 기기: 주소 끝에 ?mlab_test=1 로 한 번 열면 이 브라우저는 집계에서 빠집니다(?mlab_test=0 으로 해제). */
+const SVC='consistency';
+(function(){const t=new URLSearchParams(location.search).get('mlab_test');try{if(t==='1')localStorage.setItem('umami.disabled','1');if(t==='0')localStorage.removeItem('umami.disabled');}catch(e){}})();
+function isTest(){try{return localStorage.getItem('umami.disabled')==='1';}catch(e){return false;}}
+const EVQ=[];let umamiReady=false;const FIRED=new Set();
+function track(name,data){
+  const d=Object.assign({svc:SVC},data||{});
+  if(umamiReady&&window.umami&&umami.track){try{umami.track(name,d);}catch(e){}}else EVQ.push([name,d]);
+  if(location.protocol==='file:'||location.hostname==='localhost'||isTest())console.log('[event]',name,d);
+}
+function trackOnce(name,data){if(FIRED.has(name))return;FIRED.add(name);track(name,data);}
+if(CONFIG.umamiWebsiteId){const s=document.createElement('script');s.defer=true;s.src='https://cloud.umami.is/script.js';s.dataset.websiteId=CONFIG.umamiWebsiteId;s.dataset.domains=CONFIG.umamiDomains;
+  s.onload=()=>{umamiReady=true;while(EVQ.length){const [n,d]=EVQ.shift();try{umami.track(n,d);}catch(e){}}};document.head.appendChild(s);}
+if(isTest())document.addEventListener('DOMContentLoaded',()=>{const b=document.createElement('div');b.className='testpill';b.textContent='테스트 모드 · 집계 제외';document.body.appendChild(b);});
 
 /* ---------- engine ---------- */
 function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
@@ -305,9 +360,17 @@ function ensemble(effort,p,rule){
   const runs=[];for(let s=1;s<=300;s++)runs.push(simulate(effort,p,rule,s*7919));
   const mt=runs.map(x=>x.total).sort((a,b)=>a-b)[150];
   let rep=runs[0];for(const x of runs)if(Math.abs(x.total-mt)<Math.abs(rep.total-mt))rep=x;
-  return{total:mt,rep,quitRate:runs.filter(x=>x.quit).length/300};
+  return{total:mt,rep,runs,quitRate:runs.filter(x=>x.quit).length/300};
 }
 const RULES={immediate:'내일 바로 다시',monday:'월요일부터 다시',guilt:'자책하다 더 미룸',quit3:'사흘 빼먹으면 그만'};
+// 재시작 '유형'은 고른 규칙에 붙인 이름입니다. 진단이 아닙니다.
+const TYPES={
+  immediate:{name:'바로 다시형',quote:'어제는 어제',desc:'빼먹은 다음 날 바로 다시 하는 규칙'},
+  monday:{name:'월요일부터형',quote:'이번 주는 망했으니까',desc:'빼먹으면 다음 월요일까지 쉬는 규칙'},
+  guilt:{name:'미루다 멀어지기형',quote:'빼먹을수록 하기 싫어짐',desc:'빼먹을 때마다 다음 날 할 가능성이 낮아지는 규칙'},
+  quit3:{name:'사흘이면 그만형',quote:'원래 이런 사람이야',desc:'사흘 연속 빼먹으면 그만두는 규칙'}
+};
+const median=a=>{const b=[...a].sort((x,y)=>x-y);return b[Math.floor(b.length/2)];};
 const hrs=m=>{const h=m/60;return (h>=10?Math.round(h):Math.round(h*10)/10)+'시간'};
 
 /* ---------- helpers ---------- */
@@ -365,25 +428,26 @@ function person(who,pose,shirt){
 }
 const SHIRT={A:'#5A6068',B:'#2E6B5E'};
 function setFig(who,pose){const el=$('svg'+who);el.innerHTML=person(who,pose,SHIRT[who]);el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');}
-const STAGE=[{A:'stand',B:'stand'},{A:'stand',B:'stand'},{A:'miss',B:'miss'},{A:'wait',B:'miss'},{A:'wait',B:'go'},{A:'think',B:'think'}];
+const STAGE=[{A:'stand',B:'stand'},{A:'miss',B:'miss'},{A:'stand',B:'stand'},{A:'wait',B:'go'},{A:'think',B:'think'}];
 /* ---------- shared-link arrival ---------- */
 const qs=new URLSearchParams(location.search);
 const state={guess:null,what:'운동',mins:60,prob:70,rule:'monday'};
 (function(){
-  if(qs.get('s')){try{if(!localStorage.getItem('cv_seen')){localStorage.setItem('cv_seen','1');track('share_visit');}}catch(e){track('share_visit');}}
+  if(/^[a-z0-9]{4,10}$/.test(qs.get('s')||'')){const key='mlab_sv_'+SVC;let seen=false;
+    try{seen=!!localStorage.getItem(key);if(!seen)localStorage.setItem(key,'1');}catch(e){try{seen=!!sessionStorage.getItem(key);if(!seen)sessionStorage.setItem(key,'1');}catch(_){}}
+    if(!seen)track('share_visit');}
   const m=+qs.get('m'),p=+qs.get('p'),r=qs.get('r');
-  if(m&&p&&RULES[r]){const res=ensemble(m,p/100,r);const b=$('friendBox');b.hidden=false;
-    b.innerHTML=`친구의 100일: 매일 ${m}분, '${RULES[r]}'으로 <b>계획의 ${Math.round(res.total/(m*100)*100)}%</b>를 했습니다.`;}
+  if([10,30,60,120].includes(m)&&[30,50,70,90].includes(p)&&RULES[r]){const res=ensemble(m,p/100,r);const b=$('friendBox');b.hidden=false;
+    b.innerHTML=`친구가 고른 재시작 규칙은 <b>${TYPES[r].name}</b>(${RULES[r]})이에요. 매일 ${m}분 기준 가상 100일에서 계획의 ${Math.round(res.total/(m*100)*100)}%를 했어요. 당신은요?`;}
 })();
 
 /* ---------- intro: lines one by one, then a button ---------- */
 const INTRO=[
-  '두 사람이 100일 동안 매일 하기로 했습니다.',
-  '<b>A</b>는 매일 60분, <b>B</b>는 매일 30분.',
+  '두 사람이 100일 동안 매일 <b>30분</b>씩 하기로 했습니다.',
   '둘 다 열흘 중 사흘은 빼먹습니다.',
-  'A는 빼먹으면 "월요일부터 다시".',
-  'B는 빼먹으면 "내일 바로 다시".',
-  '<span class="q">100일 뒤, 누가 더 많이 했을까요?</span>'
+  '다른 건 딱 하나, 빼먹은 다음 날입니다.',
+  '<b>A</b>는 "월요일부터 다시", <b>B</b>는 "내일 바로 다시".',
+  '<span class="q">100일 뒤, 두 사람의 차이는 얼마나 될까요?</span>'
 ];
 let fast=false;
 async function runIntro(){
@@ -402,11 +466,13 @@ $('topBtn').addEventListener('click',()=>{
   else{const i=['s-q1','s-q2','s-q3','s-q4'].indexOf(current);if(i>0)show(['s-q1','s-q2','s-q3','s-q4'][i-1]);}
 });
 
-/* ---------- predict → race ---------- */
-const A={m:60,p:.7,r:'monday'}, B={m:30,p:.7,r:'immediate'};
+/* ---------- predict → race (통제 비교: 노력·확률 같음, 규칙만 다름. 승패·문장은 모두 계산값으로) ---------- */
+const A={m:30,p:.7,r:'monday'}, B={m:30,p:.7,r:'immediate'};
+const poseOf=r=>r==='monday'?'wait':r==='immediate'?'go':'stand';
 document.querySelectorAll('#s-predict .choice').forEach(b=>b.addEventListener('click',async()=>{
-  await pick(b);state.guess=b.dataset.guess;track('start',{guess:state.guess});runRace();
+  await pick(b);state.guess=b.dataset.guess;trackOnce('start',{guess:state.guess});runRace();
 }));
+function gapClass(x,y){const hi=Math.max(x,y),lo=Math.max(1,Math.min(x,y)),k=hi/lo;return k<1.1?'same':k<1.5?'small':'big';}
 async function runRace(){
   show('s-race');
   $('raceVerdict').hidden=true;$('toMine').hidden=true;$('laneA').classList.remove('win');$('laneB').classList.remove('win');
@@ -423,14 +489,20 @@ async function runRace(){
     if(!reduce&&d%2===1)await sleep(30);
   }
   $('aHrs').textContent=hrs(ra.total); $('bHrs').textContent=hrs(rb.total);
-  $('laneB').classList.add('win');
-  $('miniA').innerHTML=`<span class="mini">${person('A','wait',SHIRT.A)}</span><b>A</b>`;
-  $('miniB').innerHTML=`<span class="mini">${person('B','go',SHIRT.B)}</span><b>B</b>`;
-  const waitDays=ra.rep.marks.filter(x=>x===2).length;
-  const yours={A:'A를 고르셨어요.',B:'B를 고르셨어요. 맞혔습니다.',same:'비슷할 거라고 하셨어요.'}[state.guess];
-  const v=$('raceVerdict');v.hidden=false;
-  v.innerHTML=`<span class="yours">${yours}</span>A는 B보다 두 배로 계획했지만, 100일 뒤엔 <b>B가 더 많이</b> 했습니다. A의 100일 중 <b>${waitDays}일</b>은 빼먹은 날이 아니라 월요일을 기다린 날이었어요.`;
-  $('raceTitle').textContent='B가 더 많이 했습니다';
+  $('miniA').innerHTML=`<span class="mini">${person('A',poseOf(A.r),SHIRT.A)}</span><b>A</b>`;
+  $('miniB').innerHTML=`<span class="mini">${person('B',poseOf(B.r),SHIRT.B)}</span><b>B</b>`;
+  // 같은 시드끼리 짝지어 300번 비교 (A가 더 많았던 횟수 / 같았던 횟수)
+  let aMore=0,tie=0;ra.runs.forEach((x,i)=>{const y=rb.runs[i].total;if(x.total>y)aMore++;else if(x.total===y)tie++;});
+  const g=gapClass(ra.total,rb.total), hiIsA=ra.total>rb.total, k=Math.max(ra.total,rb.total)/Math.max(1,Math.min(ra.total,rb.total));
+  if(g!=='same')$(hiIsA?'laneA':'laneB').classList.add('win');
+  $('raceTitle').textContent= g==='same' ? '두 사람의 결과는 거의 같았습니다' : `${hiIsA?'A':'B'}가 ${hiIsA?'B':'A'}보다 ${k.toFixed(1)}배 많이 했습니다`;
+  const guessText={same:'거의 같을 거라고',small:'조금 차이 날 거라고',big:'크게 차이 날 거라고'}[state.guess];
+  const yours=`${guessText} 예상하셨어요. ${state.guess===g?'예상과 같았습니다.':'예상과 달랐습니다.'}`;
+  const waitA=median(ra.runs.map(x=>x.marks.filter(m=>m===2).length));
+  let v=`<span class="yours">${yours}</span>같은 30분, 같은 확률(열흘 중 7일)인데 100일 뒤 A는 <b>${hrs(ra.total)}</b>, B는 <b>${hrs(rb.total)}</b>을 했습니다. 달랐던 건 빼먹은 다음 날의 규칙뿐이에요.`;
+  if(waitA>0)v+=` A의 100일 중 ${waitA}일은 규칙 때문에 쉰 날이었습니다.`;
+  v+=`<span class="yours" style="margin-top:8px">같은 조건으로 300번 돌렸을 때 A가 B보다 많이 한 경우 ${aMore}번${tie?`, 같았던 경우 ${tie}번`:''} · 가상 시뮬레이션</span>`;
+  const el=$('raceVerdict');el.innerHTML=v;el.hidden=false;
   $('toMine').hidden=false;
 }
 $('toMine').addEventListener('click',()=>show('s-q1'));
@@ -457,8 +529,10 @@ async function runResult(){
   const {what,mins,prob,rule}=state, p=prob/100, plan=mins*100;
   mine=ensemble(mins,p,rule);
   alt=rule==='immediate'?ensemble(mins,p,'monday'):ensemble(mins,p,'immediate');
-  $('resWhat').textContent=`나의 100일 · ${what} · 매일 ${mins}분 · ${RULES[rule]}`;
-  $('resPlan').textContent=hrs(plan);
+  $('resWhat').textContent=`나의 100일 · ${what} · 매일 ${mins}분 · 열흘 중 ${prob/10}일`;
+  $('typeName').textContent=TYPES[rule].name;
+  $('typeLine').textContent=`"${TYPES[rule].quote}" · ${TYPES[rule].desc}`;
+  setCTA(goalGroup(what));
   $('tAlt').textContent=rule==='immediate'?'월요일부터였다면':'바로 다시였다면';
   setToggle(false);$('punch').hidden=true;setMe(.5);
   const cells=makeCal($('myCal'));let t=0;
@@ -466,16 +540,17 @@ async function runResult(){
   setBig(mine.total,plan);
   setMe(mine.total/plan);
   writePunch();$('punch').hidden=false;
-  track('complete',{rule,mins,prob});
+  trackOnce('complete',{rule,mins,prob,goal:goalGroup(what)});
 }
 function mePose(r){return r>=.6?'go':r>=.35?'stand':'wait';}
 function setMe(r){$('meFig').innerHTML=`<span class="me">${person('B',mePose(r),SHIRT.B)}</span>`;}
-function setBig(total,plan){$('resBig').innerHTML=`${hrs(total).replace('시간','')}<small>시간</small>`;$('resPct').textContent=`실제로 한 건 ${Math.round(total/plan*100)}%`;}
+function setBig(total,plan){$('resBig').textContent=hrs(total);$('resPct').textContent=`계획 ${hrs(plan)} 중 ${Math.round(total/plan*100)}%`;}
 function writePunch(){
   const {mins,rule}=state, plan=mins*100, k=alt.total/Math.max(1,mine.total);
   let s;
-  if(rule==='immediate')s=`빼먹어도 바로 다시 한 덕분에 계획의 <b>${Math.round(mine.total/plan*100)}%</b>를 지켰어요. '월요일부터 다시'였다면 <b>${hrs(alt.total)}</b>에 그쳤을 거예요.`;
-  else{s=`노력을 늘리지 않아도, 규칙 하나만 '내일 바로 다시'로 바꾸면 <b>${hrs(alt.total)}</b>. 지금보다 <b>${k.toFixed(1)}배</b>예요.`;
+  if(rule==='immediate'){const r=alt.total/Math.max(1,mine.total);
+    s=`이 규칙으로 가상 100일 동안 계획의 <b>${Math.round(mine.total/plan*100)}%</b>를 했어요. 같은 조건에서 '월요일부터 다시'였다면 <b>${hrs(alt.total)}</b>${r<0.9?`, 지금의 ${Math.round(r*100)}% 수준`:''}이에요.`;}
+  else{s= k>=1.1 ? `노력과 확률은 그대로 두고 규칙만 '내일 바로 다시'로 바꾸면 가상 100일 <b>${hrs(alt.total)}</b>, 지금의 <b>${k.toFixed(1)}배</b>예요.` : `같은 조건에서 '내일 바로 다시'로 바꿔도 가상 100일 <b>${hrs(alt.total)}</b>로 차이가 거의 없어요.`;
     if(rule==='quit3')s+=` 같은 조건으로 300번 돌리면 ${Math.round(mine.quitRate*100)}%는 100일 안에 그만뒀어요.`;}
   $('punch').innerHTML=s;
 }
@@ -484,51 +559,58 @@ $('tMine').addEventListener('click',()=>{if(!mine)return;setToggle(false);paintC
 $('tAlt').addEventListener('click',()=>{if(!alt)return;setToggle(true);paintCal([...$('myCal').children],alt.rep.marks);setBig(alt.total,state.mins*100);setMe(alt.total/(state.mins*100));track('compare_toggle');});
 $('again').addEventListener('click',()=>show('s-q1'));
 
+/* ---------- goal-based links ---------- */
+function goalGroup(what){for(const [g,c] of Object.entries(CONFIG.goals))if(c.match.includes(what))return g;return 'general';}
+function withUtm(url,medium,group){const u=new URL(url);u.searchParams.set('utm_source','micro_lab');u.searchParams.set('utm_medium',medium);u.searchParams.set('utm_campaign','consistency');u.searchParams.set('utm_content',group);return u.toString();}
+function setCTA(group){
+  const c=CONFIG.goals[group], main=$('ctaMain'), sub=$('ctaSub'), card=$('ctaLink');
+  $('ctaText').textContent=c.text;
+  if(c.main){main.hidden=false;main.textContent=c.main.label;main.dataset.type=c.main.type;main.href=withUtm(c.main.url,'result_main',group);}else main.hidden=true;
+  sub.hidden=!c.sub;sub.href=withUtm(CONFIG.links.opentalk,'result_sub',group);
+  card.href=withUtm(CONFIG.links.haengdong,c.main?'result_link':'result_main',group);
+  [main,sub,card].forEach(a=>{a.target='_blank';a.rel='noopener';a.dataset.group=group;});
+}
+
 /* ---------- share ---------- */
 function shareUrl(){const u=new URL(location.origin+location.pathname);u.searchParams.set('m',state.mins);u.searchParams.set('p',state.prob);u.searchParams.set('r',state.rule);u.searchParams.set('s',Math.random().toString(36).slice(2,8));return u.toString();}
-function shareText(){
-  const plan=state.mins*100,mk=mine.rep.marks,rows=[];
-  for(let r=0;r<10;r++)rows.push(mk.slice(r*10,r*10+10).map(m=>m===1?'🟩':m===0?'⬜':'▫️').join(''));
-  const k=state.rule==='immediate'?'':`\n규칙만 바꾸면 ${(alt.total/Math.max(1,mine.total)).toFixed(1)}배`;
-  return `꾸준함의 착시 · 나의 100일\n매일 ${state.mins}분 · ${RULES[state.rule]}\n계획 ${hrs(plan)} → 실제 ${hrs(mine.total)} (${Math.round(mine.total/plan*100)}%)\n${rows.join('\n')}${k}\n${shareUrl()}`;
-}
 $('shKakao').addEventListener('click',async()=>{
-  track('share_click',{channel:'kakao'});
-  const url=shareUrl();
-  if(CONFIG.kakaoJsKey&&window.Kakao){try{if(!Kakao.isInitialized())Kakao.init(CONFIG.kakaoJsKey);Kakao.Share.sendDefault({objectType:'text',text:`나의 100일: 계획의 ${Math.round(mine.total/(state.mins*100)*100)}%. 당신은?`,link:{mobileWebUrl:url,webUrl:url}});return;}catch(e){}}
-  if(navigator.share){try{await navigator.share({title:'꾸준함의 착시',text:'100일 뒤 누가 더 많이 했을까?',url});return;}catch(e){}}
+  track('share_click',{channel:'kakao',place:'result'});
+  const url=shareUrl(), T=TYPES[state.rule], msg=`나의 재시작 규칙: ${T.name} ("${T.quote}"). 같은 노력이라도 규칙에 따라 100일이 달라져요(가상 시뮬레이션). 당신은?`;
+  if(CONFIG.kakaoJsKey&&window.Kakao){try{if(!Kakao.isInitialized())Kakao.init(CONFIG.kakaoJsKey);Kakao.Share.sendDefault({objectType:'text',text:msg,link:{mobileWebUrl:url,webUrl:url}});return;}catch(e){}}
+  if(navigator.share){try{await navigator.share({title:'꾸준함의 착시',text:msg,url});return;}catch(e){}}
   toast(await copyText(url)?'링크를 복사했어요. 카톡에 붙여넣어 주세요':'복사하지 못했어요');
 });
 if(CONFIG.kakaoJsKey){const s=document.createElement('script');s.src='https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';document.head.appendChild(s);}
 
 function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});}
 async function drawCard(){
-  const c=$('card'),x=c.getContext('2d'),W=1080,H=1350,plan=state.mins*100;
+  const c=$('card'),x=c.getContext('2d'),W=1080,H=1350,plan=state.mins*100,T=TYPES[state.rule];
   const css=getComputedStyle(document.documentElement),col=n=>css.getPropertyValue(n).trim(),F='"Noto Sans KR",sans-serif';
   x.fillStyle=col('--bg');x.fillRect(0,0,W,H);
-  x.fillStyle=col('--muted');x.font=`500 32px ${F}`;x.fillText('꾸준함의 착시 · 나의 100일',90,120);
-  x.fillStyle=col('--ink');x.font=`500 36px ${F}`;x.fillText(`${state.what} · 매일 ${state.mins}분 · ${RULES[state.rule]}`,90,175);
-  x.font=`300 150px ${F}`;const big=hrs(mine.total).replace('시간','');x.fillText(big,82,350);
-  const bw=x.measureText(big).width;x.fillStyle=col('--muted');x.font=`400 44px ${F}`;x.fillText('시간',100+bw,350);
-  x.fillText(`계획 ${hrs(plan)} 중 ${Math.round(mine.total/plan*100)}%`,90,415);
-  const size=64,gap=9,ox=90,oy=470;
+  x.fillStyle=col('--muted');x.font=`500 32px ${F}`;x.fillText('꾸준함의 착시 · 내가 고른 재시작 규칙',90,120);
+  x.fillStyle=col('--ink');x.font=`700 76px ${F}`;x.fillText(T.name,90,225);
+  x.fillStyle=col('--accent');x.font=`500 40px ${F}`;x.fillText(`"${T.quote}"`,90,295);
+  x.fillStyle=col('--muted');x.font=`400 30px ${F}`;x.fillText(T.desc,90,350);
+  const size=62,gap=9,ox=90,oy=410;
   mine.rep.marks.forEach((m,d)=>{const cx=ox+(d%10)*(size+gap),cy=oy+Math.floor(d/10)*(size+gap);
     x.fillStyle=m===1?col('--accent'):m===0?col('--miss'):'#FFFFFF';x.beginPath();x.roundRect?x.roundRect(cx,cy,size,size,8):x.rect(cx,cy,size,size);x.fill();
     if(m===2){x.strokeStyle=col('--line');x.lineWidth=2;x.stroke();}});
-  x.fillStyle=col('--accent');x.font=`500 40px ${F}`;
-  x.fillText(state.rule==='immediate'?'빼먹어도 다음 날 바로 다시.':`규칙만 바꾸면 ${(alt.total/Math.max(1,mine.total)).toFixed(1)}배.`,90,1365-130);
-  x.fillStyle=col('--muted');x.font=`400 26px ${F}`;x.fillText('시뮬레이션 결과이며 개인의 미래 예측이 아닙니다',90,1290);
-  try{const ch=await loadImg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(person('B',mePose(mine.total/plan),SHIRT.B)));x.drawImage(ch,790,190,210,240);}catch(e){}
+  x.fillStyle=col('--ink');x.font=`400 34px ${F}`;
+  x.fillText(`${state.what} · 매일 ${state.mins}분 · 가상 100일 ${hrs(mine.total)} (계획의 ${Math.round(mine.total/plan*100)}%)`,90,1185);
+  const k=alt.total/Math.max(1,mine.total);
+  if(state.rule!=='immediate'&&k>=1.1){x.fillStyle=col('--accent');x.font=`500 36px ${F}`;x.fillText(`규칙만 '내일 바로 다시'로 바꾸면 ${k.toFixed(1)}배`,90,1240);}
+  x.fillStyle=col('--muted');x.font=`400 24px ${F}`;x.fillText('고른 규칙의 가상 시뮬레이션이며, 성격 진단이나 미래 예측이 아닙니다',90,1300);
+  try{const ch=await loadImg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(person('B',mePose(mine.total/plan),SHIRT.B)));x.drawImage(ch,820,90,180,206);}catch(e){}
   return c.toDataURL('image/png');
 }
-$('shImg').addEventListener('click',async()=>{track('share_click',{channel:'image'});try{await document.fonts.ready;}catch(e){}$('sheetImg').src=await drawCard();$('sheet').hidden=false;});
+$('shImg').addEventListener('click',async()=>{track('share_click',{channel:'image',place:'result'});try{await document.fonts.ready;}catch(e){}$('sheetImg').src=await drawCard();$('sheet').hidden=false;});
 $('sheetSave').addEventListener('click',()=>{const a=document.createElement('a');a.href=$('sheetImg').src;a.download='my-100-days.png';document.body.appendChild(a);a.click();a.remove();});
 $('sheetClose').addEventListener('click',()=>$('sheet').hidden=true);
 $('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').hidden=true;});
 
 /* ---------- CTA ---------- */
-['ctaMain','ctaSub','ctaLink'].forEach(id=>{const a=$(id),href=CONFIG.cta[a.dataset.type];if(href){a.href=href;a.target='_blank';a.rel='noopener';}
-  a.addEventListener('click',e=>{track('cta_click',{type:a.dataset.type});if(!href){e.preventDefault();toast('링크 연결 예정입니다');}});});
+['ctaMain','ctaSub','ctaLink'].forEach(id=>{const a=$(id);
+  a.addEventListener('click',()=>track('cta_click',{type:a.dataset.type,goal:a.dataset.group||'general',place:'result'}));});
 
 show('s-intro');
 runIntro();

@@ -105,21 +105,44 @@ h2{font-size:22px}
 .cta.dark p{color:#fff}
 .cta.dark .btn{background:#fff;color:var(--ink)}
 .cta.dark .btn.ghost{background:transparent;color:#fff;border:1px solid #4A4E54}
-.cta-card{display:flex;align-items:center;gap:12px;margin-top:14px;padding:14px;border-radius:12px;background:#33373D;color:#fff;text-decoration:none;transition:background .15s}
-.cta-card:hover{background:#3B4046}
-.cc-av{flex:none;width:40px;height:40px;border-radius:50%;background:#fff;color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:16px}
+.cta-card{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--ink);text-decoration:none;transition:background .15s}
+.cta-card:hover{background:#D9E8E2}
+.cc-av{flex:none;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700;font-size:15px}
 .cc-body{flex:1;min-width:0;display:flex;flex-direction:column}
-.cc-k{font-size:12.5px;color:#AEB3B9}
-.cc-t{font-size:15.5px;font-weight:700;line-height:1.4}
-.cc-go{flex:none;font-size:18px;color:#fff}
+.cc-k{font-size:12px;color:var(--muted)}
+.cc-t{font-size:14.5px;font-weight:700;line-height:1.4}
+.cc-go{flex:none;font-size:17px;color:var(--accent)}
+.aud{margin-top:22px;padding:18px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+.aud-k{margin:0;font-size:12.5px;color:var(--muted)}
+.aud h3{margin:2px 0 0;font-size:19px;font-weight:700}
+.aud-help{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.aud-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.aud-opt{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 8px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-size:15px;font-weight:500;color:var(--ink)}
+.aud-opt .ic{font-size:20px;line-height:1}
+.aud-opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.aud-body{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.aud-body h4{margin:0;font-size:17px;font-weight:700}
+.aud-body > p{margin:6px 0 0;font-size:14.5px;color:var(--muted);line-height:1.65}
+.rec{margin-top:14px;display:flex;flex-direction:column;gap:2px}
+.rec .rec-k{font-size:12.5px;color:var(--muted)}
+.rec b{font-size:16px}
+.rec .rec-d{font-size:13.5px;color:var(--muted)}
+.aud-body .btn{margin-top:12px}
+.sub-link{display:inline-block;margin-top:12px;font-size:14px;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
 .diff{display:flex;flex-direction:column;gap:12px;margin-top:22px}
 .dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
 .dcard h3{margin:0 0 8px;font-size:15px;font-weight:700}
-.bar{display:grid;grid-template-columns:80px 1fr 44px;gap:10px;align-items:center;font-size:14px;margin-top:6px}
+.bar{display:grid;grid-template-columns:92px 1fr 44px;gap:10px;align-items:center;font-size:14px;margin-top:6px}
 .bar .t{height:8px;border-radius:4px;background:#EEEBE6;overflow:hidden}
 .bar .t i{display:block;height:100%;background:var(--accent);border-radius:4px}
 .bar .v{font-size:14px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
 .dcard p{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+.dcard .scope{display:block;margin:-4px 0 8px;font-size:12.5px;color:var(--muted)}
+.map-pre{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+.quick-share{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:14px;font-size:13.5px;color:var(--muted)}
+.quick-share .qs{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.quick-share .qs:hover{border-color:var(--accent)}
+.testpill{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:8px;z-index:40;background:#B3261E;color:#fff;font-size:12px;padding:3px 10px;border-radius:999px}
 .cta{margin-top:20px;padding:18px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
 .cta p{margin:0;font-size:15.5px}
 .source{margin-top:28px;font-size:12px;color:var(--muted);line-height:1.7}
@@ -157,6 +180,7 @@ h2{font-size:22px}
     <p class="step">2 / 2</p>
     <h2 id="guessQ"></h2>
     <p class="help" id="guessHelp"></p>
+    <p class="map-pre" id="guessMap" hidden></p>
     <div class="choices" id="guessChoices">
       <button class="choice" type="button" data-v="80">약 80곳</button>
       <button class="choice" type="button" data-v="60">약 60곳</button>
@@ -179,21 +203,20 @@ h2{font-size:22px}
       <button type="button" data-y="5" aria-pressed="true">5년 뒤</button>
     </div>
     <p class="map-note" id="mapNote"></p>
-    <div class="disclaimer">과거에 같은 업종으로 시작한 기업들의 기록입니다. 개별 사업의 미래 확률이 아닙니다.</div>
+    <div class="disclaimer">과거 같은 업종에서 새로 생긴 기업들의 기록입니다. 개별 사업의 미래 확률이 아닙니다.</div>
+    <div class="quick-share"><span>이 결과 보내기</span><button class="qs" type="button" id="qsKakao">카카오톡</button><button class="qs" type="button" id="qsImg">이미지</button></div>
 
-    <button class="teaser" type="button" id="toDiff">
-      <span class="t1">같은 해에 시작해도</span>
-      <b>오래 남은 곳들은 무엇이 달랐을까?</b>
-      <span class="t2">혼자 시작한 곳 100곳 중 35곳, 둘 이상이 시작한 곳 47곳</span>
-      <span class="t3">확인하러 가기 →</span>
-    </button>
+    <div id="audResult"></div>
+
+    <button class="textlink" type="button" id="toDiff">오래 남은 기업들은 무엇이 달랐을까? 추가 통계 보기 →</button>
+    <p class="help" id="teaserSub" style="text-align:center;font-size:12.5px;margin-top:2px"></p>
     <button class="textlink" type="button" id="otherInd">다른 업종 보기</button>
   </section>
 
   <section class="scene" id="s-diff" hidden>
-    <p class="step">2018년에 문을 연 100곳 중, 2023년에도 남아 있던 곳</p>
-    <h2>오래 남은 곳들의 통계상 차이</h2>
-    <p class="help">전체 업종 기준(2018년 창업 → 2023년)입니다. 이 차이가 원인이라는 뜻은 아니에요.</p>
+    <p class="step">2018년에 새로 생긴 기업 100곳 중, 2023년에도 남아 있던 곳</p>
+    <h2>오래 남은 기업들의 통계상 차이</h2>
+    <p class="help" id="diffHelp"></p>
     <div class="diff" id="diff"></div>
     <button class="btn accent" type="button" id="toMe">나는 어느 쪽일까? 확인하러 가기</button>
     <button class="textlink" type="button" id="backResult">결과로 돌아가기</button>
@@ -201,11 +224,11 @@ h2{font-size:22px}
 
   <section class="scene" id="s-me1" hidden>
     <div class="progress"><i class="on"></i><i></i></div>
-    <h2>지금 몇 명이서 하고 있나요?</h2>
-    <p class="help">준비 중이라면 시작할 때 계획 기준으로 골라 주세요.</p>
+    <h2>대표님 외에 급여를 신고하는 직원이 있나요?</h2>
+    <p class="help">통계의 '종사자'는 대표자와 상용근로자(근로소득을 신고한 직원)만 셉니다. 아르바이트·일용직·무급 가족은 포함되지 않아요.</p>
     <div class="choices" id="teamChoices">
-      <button class="choice" type="button" data-v="solo">혼자</button>
-      <button class="choice" type="button" data-v="team">2명 이상</button>
+      <button class="choice" type="button" data-v="solo">없어요 · 종사자 1인</button>
+      <button class="choice" type="button" data-v="team">있어요 · 종사자 2인 이상</button>
     </div>
   </section>
 
@@ -224,20 +247,15 @@ h2{font-size:22px}
   </section>
 
   <section class="scene" id="s-final" hidden>
-    <p class="step">나와 비슷하게 시작한 곳들의 기록 · 5년 뒤</p>
+    <p class="step">나와 조건이 비슷한 기업들의 기록 · 2018년 신생기업 → 2023년</p>
     <h2 id="finalTitle"></h2>
     <div class="mine" id="mine"></div>
     <p class="help" style="font-size:13px">세 숫자는 각각 따로 집계된 기록입니다. 합쳐서 계산한 확률이 아니에요.</p>
     <p class="insight" id="insight"></p>
 
-    <div class="cta dark" style="margin-top:22px">
-      <p>남는 쪽에 서는 방법,<br>폐업을 막는 마케팅부터 시작해 보세요.</p>
-      <a class="btn" id="ctaMain" href="#" data-type="mkt_blog">폐업을 막는 마케팅 전략 읽기</a>
-      <a class="btn ghost" id="ctaSub" href="#" data-type="opentalk">마케팅주의자 오픈톡방 들어가기</a>
-      <a class="cta-card" id="ctaLink" href="#" data-type="haengdong"><span class="cc-av" aria-hidden="true">행</span><span class="cc-body"><span class="cc-k">행동주의자의 글</span><span class="cc-t">나를 소개합니다 · 부와 행복의 추월차선</span></span><span class="cc-go" aria-hidden="true">→</span></a>
-    </div>
+    <div id="audFinal"></div>
 
-    <div class="share">
+    <div class="share" id="finalShare">
       <h3>내 생존지도 보내기</h3>
       <div class="share-row">
         <button class="btn accent" type="button" id="shKakao">카카오톡으로 보내기</button>
@@ -247,7 +265,7 @@ h2{font-size:22px}
     <button class="textlink" type="button" id="otherInd2">다른 업종도 보기</button>
   </section>
 
-  <p class="source">출처: 국가데이터처「기업생멸행정통계」 2024년 잠정 결과(2025.10.23 공표), KOSIS 산업별 신생기업 생존율. 대상은 매출이나 상용근로자가 있는 영리기업이며, 매출과 상용근로자가 1년 이상 없으면 소멸로 봅니다. 1·3·5년 기록은 서로 다른 해에 창업한 기업들입니다. 숫자는 잠정치이며 바뀔 수 있습니다. 이 페이지는 국가데이터처가 만든 것이 아닙니다.</p>
+  <p class="source">출처: 국가데이터처「기업생멸행정통계」 2024년 잠정 결과(2025.10.23 공표) 표 2.1 산업별 신생기업 생존율, 표 2.2 산업별 조직형태별, 표 2.3 산업별 종사자 규모별, 표 2.4 대표자 성·연령별 생존율(모두 2023년 잠정). 생존율은 신생기업 중 2023년까지 생존한 비율이며, 1·3·5년은 각각 2022·2020·2018년 신생기업으로 서로 다른 집단입니다. 대상은 매출이나 상용근로자가 있는 영리기업이고, 매출과 상용근로자가 1년 이상 없으면 소멸로 봅니다. 종사자는 대표자와 상용근로자의 합계이며, 상용근로자에는 임시·일용·무급가족종사자가 포함되지 않습니다. 업종은 산업 대분류 기준입니다. 숫자는 잠정치이며 바뀔 수 있습니다. 이 페이지는 국가데이터처가 만든 것이 아닙니다.</p>
 </div>
 
 <div class="sheet" id="sheet" hidden><div class="inner"><img id="sheetImg" alt="생존지도 결과 카드"><button class="btn" type="button" id="sheetSave">저장하기</button><button class="btn ghost" type="button" id="sheetClose">닫기</button><p>저장이 안 되면 이미지를 길게 눌러 저장하세요.</p></div></div>
@@ -257,16 +275,32 @@ h2{font-size:22px}
 <script>
 /* ---------- settings: fill these in before launch ---------- */
 const CONFIG={
-  umamiWebsiteId:"",
+  umamiWebsiteId:"7b5f85ea-0244-4a1b-97fb-92e3cdfba938",                         // Umami Website ID (공개 식별자, 비밀 아님)
+  umamiDomains:"okhyun304-dot.github.io",   // 이 도메인에서 열렸을 때만 집계
   kakaoJsKey:"",
-  cta:{
-    mkt_blog:"https://blog.naver.com/godehd54/223799699931?utm_source=micro_lab&utm_medium=final_main&utm_campaign=survival",   // 마케팅주의자 블로그: 자영업자 폐업을 막는 단 하나의 마케팅 전략
-    opentalk:"https://open.kakao.com/o/sjQvlOVg?utm_source=micro_lab&utm_medium=final_sub&utm_campaign=survival",                 // 마케팅주의자 오픈톡방
-    haengdong:"https://blog.naver.com/guraud22/222099927754?utm_source=micro_lab&utm_medium=final_link&utm_campaign=survival"      // 행동주의자 블로그: 나를 소개합니다(부와 행복의 추월차선)
+  links:{
+    mkt_blog:"https://blog.naver.com/godehd54/223799699931",   // 마케팅주의자 블로그: 자영업자 폐업을 막는 단 하나의 마케팅 전략
+    opentalk:"https://open.kakao.com/o/sjQvlOVg",              // 마케팅주의자 오픈톡방
+    haengdong:"https://blog.naver.com/guraud22/222099927754"   // 행동주의자 블로그: 나를 소개합니다(부와 행복의 추월차선)
   }
 };
-function track(name,data){try{if(window.umami&&umami.track)umami.track(name,data||{});}catch(e){} if(location.hostname==='localhost'||location.protocol==='file:')console.log('[event]',name,data||'');}
-if(CONFIG.umamiWebsiteId){const s=document.createElement('script');s.defer=true;s.src='https://cloud.umami.is/script.js';s.dataset.websiteId=CONFIG.umamiWebsiteId;document.head.appendChild(s);}
+/* ---------- anonymous events (Umami) ----------
+   - 모든 이벤트에 svc(서비스 이름)를 붙여 한 사이트 ID 안에서 두 실험을 나눠 봅니다.
+   - Umami 스크립트가 로드되기 전 이벤트는 대기열에 모았다가 로드 직후 보냅니다.
+   - 테스트 기기: 주소 끝에 ?mlab_test=1 로 한 번 열면 이 브라우저는 집계에서 빠집니다(?mlab_test=0 으로 해제). */
+const SVC='survival';
+(function(){const t=new URLSearchParams(location.search).get('mlab_test');try{if(t==='1')localStorage.setItem('umami.disabled','1');if(t==='0')localStorage.removeItem('umami.disabled');}catch(e){}})();
+function isTest(){try{return localStorage.getItem('umami.disabled')==='1';}catch(e){return false;}}
+const EVQ=[];let umamiReady=false;const FIRED=new Set();
+function track(name,data){
+  const d=Object.assign({svc:SVC},data||{});
+  if(umamiReady&&window.umami&&umami.track){try{umami.track(name,d);}catch(e){}}else EVQ.push([name,d]);
+  if(location.protocol==='file:'||location.hostname==='localhost'||isTest())console.log('[event]',name,d);
+}
+function trackOnce(name,data){if(FIRED.has(name))return;FIRED.add(name);track(name,data);}
+if(CONFIG.umamiWebsiteId){const s=document.createElement('script');s.defer=true;s.src='https://cloud.umami.is/script.js';s.dataset.websiteId=CONFIG.umamiWebsiteId;s.dataset.domains=CONFIG.umamiDomains;
+  s.onload=()=>{umamiReady=true;while(EVQ.length){const [n,d]=EVQ.shift();try{umami.track(n,d);}catch(e){}}};document.head.appendChild(s);}
+if(isTest())document.addEventListener('DOMContentLoaded',()=>{const b=document.createElement('div');b.className='testpill';b.textContent='테스트 모드 · 집계 제외';document.body.appendChild(b);});
 
 /* ---------- data: 2023p survival (%) — replace on 2026-10-22 release ---------- */
 const DATA_YEAR=2023;
@@ -282,7 +316,7 @@ const PICKS=[
  ["retail","쇼핑몰·소매점","도·소매업","온라인 쇼핑몰과 동네 가게, 도매상이 함께 들어 있어요."],
  ["beauty","미용·네일·세탁","개인서비스업","미용실, 세탁소, 수리점 등이 함께 들어 있어요."],
  ["edu","학원·교습소","교육서비스업","학원, 교습소, 직업훈련 등이 함께 들어 있어요."],
- ["leisure","헬스·PC방·스튜디오","예술·스포츠·여가","헬스장, PC방, 공연·창작 등이 함께 들어 있어요."],
+ ["leisure","헬스장·PC방·공연","예술·스포츠·여가","헬스장, PC방, 공연·창작 등이 함께 들어 있어요. 사진 스튜디오는 '전문·과학·기술'로 분류돼요."],
  ["health","병원·요양시설","보건·사회복지","병·의원, 요양시설, 복지시설이 함께 들어 있어요."],
  ["it","앱·콘텐츠·출판","정보통신업","소프트웨어, 출판, 영상 제작 등이 함께 들어 있어요."],
  ["pro","광고·디자인·컨설팅","전문·과학·기술","광고, 디자인, 컨설팅, 연구개발 등이 함께 들어 있어요."],
@@ -292,14 +326,14 @@ const PICKS=[
  ["facility","청소·방역·인력","사업시설관리","청소, 방역, 인력 공급, 경비 등이 함께 들어 있어요."],
  ["realty","부동산 중개·임대","부동산업","중개업과 임대사업자가 함께 들어 있어요."],
  ["farm","농장·어업","농림어업","농업, 임업, 어업이 함께 들어 있어요."],
- ["all","전체 평균","전산업","모든 업종을 합친 숫자예요."]
+ ["all","전체 산업","전산업","모든 업종을 합친 숫자예요."]
 ];
 const COHORT={1:DATA_YEAR-1,3:DATA_YEAR-3,5:DATA_YEAR-5};
-const DIFF=[
-  {t:"혼자 vs 함께",rows:[["1인 기업",35.1],["2인 이상",47.2]],note:"종사자가 한 명뿐인 곳보다 두 명 이상인 곳이 더 많이 남았습니다."},
-  {t:"개인 vs 법인",rows:[["개인사업자",35.9],["법인",43.0]],note:"법인으로 시작한 곳이 조금 더 많이 남았습니다."},
-  {t:"대표자 나이",rows:[["30대 미만",26.7],["30대",35.3],["40대",39.2],["50대",38.4],["60대",36.3],["70대 이상",29.8]],note:"40~50대에 시작한 곳이 가장 많이 남았습니다."}
-];
+// 5년 생존율(2018 신생 → 2023), 보도자료 표 2.3 [종사자 1인, 2인 이상] / 표 2.2 [개인, 법인]. 출처·기준: data/생존지도_원표_출처와_집계기준.md
+const SIZE5={"전산업":[35.1,47.2],"농림어업":[28.1,55.5],"광업":[14.6,35.1],"제조업":[43.1,54.2],"전기·가스·증기":[79.3,60.8],"수도·하수·폐기":[50.8,62.6],"건설업":[39.5,52.5],"도·소매업":[30.0,48.3],"운수·창고업":[47.7,53.8],"숙박·음식점업":[25.8,35.8],"정보통신업":[36.9,44.3],"금융·보험업":[22.9,43.0],"부동산업":[39.5,45.5],"전문·과학·기술":[37.6,55.2],"사업시설관리":[28.9,36.6],"교육서비스업":[34.1,48.0],"보건·사회복지":[34.6,71.1],"예술·스포츠·여가":[25.6,42.1],"개인서비스업":[37.5,49.3]};
+const ORG5={"전산업":[35.9,43.0],"농림어업":[28.6,34.5],"광업":[16.1,23.2],"제조업":[45.6,48.9],"전기·가스·증기":[80.4,62.4],"수도·하수·폐기":[53.2,58.7],"건설업":[40.5,47.1],"도·소매업":[31.2,41.6],"운수·창고업":[47.6,56.2],"숙박·음식점업":[27.1,43.2],"정보통신업":[37.1,41.6],"금융·보험업":[23.4,30.7],"부동산업":[39.6,37.5],"전문·과학·기술":[40.5,44.8],"사업시설관리":[29.6,32.7],"교육서비스업":[34.8,44.3],"보건·사회복지":[63.1,57.1],"예술·스포츠·여가":[26.3,42.2],"개인서비스업":[38.2,41.1]};
+// 대표자 연령별 5년 생존율, 표 2.4 (전체 산업만 공표 → 화면에 '전체 산업 기준' 표시)
+const AGES=[["30대 미만",26.7],["30대",35.3],["40대",39.2],["50대",38.4],["60대",36.3],["70대 이상",29.8]];
 
 /* ---------- helpers ---------- */
 const $=id=>document.getElementById(id);
@@ -310,7 +344,7 @@ function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('on');c
 async function copyText(text){try{await navigator.clipboard.writeText(text);return true;}catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}ta.remove();return ok;}}
 function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const ORDER=(()=>{const r=rng(2018),o=[...Array(100).keys()];for(let i=99;i>0;i--){const j=Math.floor(r()*(i+1));[o[i],o[j]]=[o[j],o[i]];}return o;})(); // which shops close first
-const state={pick:null,guess:null,y:5};
+const state={pick:null,guess:null,y:5,aud:null};
 const P=()=>PICKS.find(p=>p[0]===state.pick);
 const val=(ind,y)=>IND[ind][y];
 const n=(ind,y)=>Math.round(val(ind,y));
@@ -319,14 +353,16 @@ function rankOf(ind,y){const all=Object.keys(IND).filter(k=>k!=="전산업").sor
 /* ---------- shared-link arrival ---------- */
 const qs=new URLSearchParams(location.search);
 (function(){
-  if(qs.get('s')){try{if(!localStorage.getItem('sv_seen')){localStorage.setItem('sv_seen','1');track('share_visit');}}catch(e){track('share_visit');}}
+  if(/^[a-z0-9]{4,10}$/.test(qs.get('s')||'')){const key='mlab_sv_'+SVC;let seen=false;
+    try{seen=!!localStorage.getItem(key);if(!seen)localStorage.setItem(key,'1');}catch(e){try{seen=!!sessionStorage.getItem(key);if(!seen)sessionStorage.setItem(key,'1');}catch(_){}}
+    if(!seen)track('share_visit');}
   const p=PICKS.find(x=>x[0]===qs.get('i')), y=[1,3,5].includes(+qs.get('y'))?+qs.get('y'):5;
   if(p){const b=$('friendBox');b.hidden=false;b.innerHTML=`친구가 본 업종: <b>${p[1]}</b>. ${COHORT[y]}년에 생긴 100곳 중 <b>${n(p[2],y)}곳</b>이 ${DATA_YEAR}년에도 남아 있었습니다. 당신의 업종은요?`;}
 })();
 
 /* ---------- intro ---------- */
 const INTRO=[
-  '지난 한 해, 새로 생긴 사업체는 <em>92만 곳</em>.',
+  '2024년 한 해, 새로 생긴 기업은 <em>92만 곳</em>.',
   '그럼 5년 전에 문을 연 곳들은',
   '지금 몇 곳이나 남아 있을까요?'
 ];
@@ -346,10 +382,11 @@ $('chips').innerHTML=PICKS.map(p=>`<button class="chip${p[0]==='all'?' wide':''}
 async function pick(btn){btn.classList.add('picked');await sleep(180);btn.classList.remove('picked');}
 $('chips').addEventListener('click',async e=>{
   const b=e.target.closest('.chip');if(!b)return;await pick(b);
-  state.pick=b.dataset.k;track('start',{industry:state.pick});
+  state.pick=b.dataset.k;trackOnce('start',{industry:state.pick});
   const p=P();
-  $('guessQ').innerHTML=`${COHORT[5]}년에 새로 생긴<br>${p[1]} 100곳.`;
+  $('guessQ').innerHTML=`${COHORT[5]}년에 새로 생긴<br>${p[1]} 기업 100곳.`;
   $('guessHelp').textContent=`${DATA_YEAR}년에도 남아 있던 곳은 몇 곳일까요?`;
+  $('guessMap').hidden=p[2]==="전산업";$('guessMap').textContent=p[2]==="전산업"?"":`통계상 '${p[2]}' 전체 기준이에요. ${p[3]}`;
   show('s-guess');
 });
 $('guessChoices').addEventListener('click',async e=>{const b=e.target.closest('.choice');if(!b)return;await pick(b);state.guess=+b.dataset.v;state.y=5;runResult(true);});
@@ -377,58 +414,67 @@ async function runResult(first){
   else gap=`${100-cnt}곳은 ${y}년을 넘기지 못했습니다.`;
   $('gap').innerHTML=gap;
   const cmp=[];
-  if(ind!=="전산업"){const r=rankOf(ind,y);cmp.push(`전체 평균 ${avg}곳 (${cnt-avg>=0?'+':''}${cnt-avg})`,`${r.total}개 업종 중 ${r.rank}위`);}
+  if(ind!=="전산업"){const r=rankOf(ind,y);cmp.push(`전체 산업 ${avg}곳 (${cnt-avg>=0?'+':''}${cnt-avg})`,`${r.total}개 업종 중 ${r.rank}위`);}
   else{const all=Object.keys(IND).filter(k=>k!=="전산업").map(k=>n(k,y));cmp.push(`업종별 ${Math.min(...all)}~${Math.max(...all)}곳`);}
   $('compare').innerHTML=cmp.map(c=>`<span>${c}</span>`).join('');
   $('mapNote').textContent=ind==="전산업"?mapNote:`'${label}'은 통계의 '${ind}' 전체 기준입니다. ${mapNote}`;
+  const [s1,s2]=SIZE5[ind];
+  $('teaserSub').textContent=`${ind==="전산업"?"":label+" 중 "}종사자 1인 기업 ${Math.round(s1)}곳 · 2인 이상 기업 ${Math.round(s2)}곳 (5년 뒤)`;
+  renderAudience();
   if(first)await animateTo(cnt);else setShops(cnt);
   $('big').innerHTML=`${cnt}<small>곳</small>`;
-  if(first)track('complete',{industry:k});
+  if(first)trackOnce('complete',{industry:k});
 }
 document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{state.y=+b.dataset.y;runResult(false);track('period',{y:state.y});}));
 $('otherInd').addEventListener('click',()=>show('s-pick'));
+// 두 집단의 5년 생존 수를 비교한 사실 문장만 만듭니다(원인·조언 없음). 더/덜은 계산으로 정합니다.
+function cmpSentence(aL,aV,bL,bV){const d=Math.round(aV)-Math.round(bV);
+  if(d===0)return `${aL}과 ${bL}의 차이는 거의 없었습니다.`;
+  return `${aL}이 ${bL}보다 100곳 중 ${Math.abs(d)}곳 ${d>0?'더':'덜'} 남아 있었습니다.`;}
+function bestAge(){return AGES.reduce((a,b)=>b[1]>a[1]?b:a);}
 $('toDiff').addEventListener('click',()=>{
-  $('diff').innerHTML=DIFF.map(d=>`<div class="dcard"><h3>${d.t}</h3>${d.rows.map(([l,v])=>`<div class="bar"><span>${l}</span><span class="t"><i style="width:${v}%"></i></span><span class="v">${Math.round(v)}곳</span></div>`).join('')}<p>${d.note}</p></div>`).join('');
+  const [k,label,ind]=P(), [s1,s2]=SIZE5[ind], [o1,o2]=ORG5[ind], scope=ind==="전산업"?"전체 산업 기준":`${label} (${ind}) 기준`;
+  $('diffHelp').textContent=`${scope} · 이 차이가 원인이라는 뜻은 아니에요.`;
+  const cards=[
+    {t:"종사자 수",scope,rows:[["종사자 1인",s1],["2인 이상",s2]],note:cmpSentence("종사자 2인 이상 기업",s2,"종사자 1인 기업",s1)+" 종사자 = 대표자 + 상용근로자."},
+    {t:"조직형태",scope,rows:[["개인기업",o1],["법인기업",o2]],note:cmpSentence("법인기업",o2,"개인기업",o1)},
+    {t:"대표자 연령",scope:"전체 산업 기준 (업종별 자료는 보도자료에 없음)",rows:AGES,note:`대표자가 ${bestAge()[0]}인 기업이 가장 많이 남아 있었습니다.`}
+  ];
+  $('diff').innerHTML=cards.map(d=>`<div class="dcard"><h3>${d.t}</h3><span class="scope">${d.scope}</span>${d.rows.map(([l,v])=>`<div class="bar"><span>${l}</span><span class="t"><i style="width:${v}%"></i></span><span class="v">${Math.round(v)}곳</span></div>`).join('')}<p>${d.note}</p></div>`).join('');
   show('s-diff');track('diff_view');
 });
 $('backResult').addEventListener('click',()=>runResult(false));
 $('otherInd2').addEventListener('click',()=>show('s-pick'));
-const AGES=DIFF[2].rows;
 const me={team:null,age:null};
 $('toMe').addEventListener('click',()=>{show('s-me1');track('me_start');});
 $('teamChoices').addEventListener('click',async e=>{const b=e.target.closest('.choice');if(!b)return;await pick(b);me.team=b.dataset.v;show('s-me2');});
 $('ageChoices').addEventListener('click',async e=>{const b=e.target.closest('.choice');if(!b)return;await pick(b);me.age=+b.dataset.v;runFinal();});
 function runFinal(){
-  const [k,label,ind]=P(), y=5;
-  const indN=n(ind,y), teamV=me.team==='solo'?35.1:47.2, otherV=me.team==='solo'?47.2:35.1;
-  const [ageL,ageV]=AGES[me.age], best=AGES.reduce((a,b)=>b[1]>a[1]?b:a);
-  $('finalTitle').textContent=`${label} · ${me.team==='solo'?'혼자':'2명 이상'} · ${ageL}`;
-  const rows=[[`${label}로 시작한 곳`,indN],[`${me.team==='solo'?'혼자':'둘 이상이'} 시작한 곳`,Math.round(teamV)],[`대표가 ${ageL}였던 곳`,Math.round(ageV)]];
+  const [k,label,ind]=P(), y=5, solo=me.team==='solo';
+  const indN=n(ind,y), [s1,s2]=SIZE5[ind], mineV=solo?s1:s2, otherV=solo?s2:s1;
+  const myL=solo?'종사자 1인 기업':'종사자 2인 이상 기업', otL=solo?'종사자 2인 이상 기업':'종사자 1인 기업';
+  const [ageL,ageV]=AGES[me.age], best=bestAge(), inScope=ind==="전산업"?"":`${label} 중 `;
+  $('finalTitle').textContent=`${label} · 종사자 ${solo?'1인':'2인 이상'} · 대표자 ${ageL}`;
+  const rows=[[ind==="전산업"?'전체 산업':`${label} 전체`,indN],[`${inScope}${myL}`,Math.round(mineV)],[`대표자가 ${ageL}인 기업 (전체 산업)`,Math.round(ageV)]];
   $('mine').innerHTML=rows.map(([l,v])=>`<div class="mrow"><span class="k">${l}</span><span class="v">${v}<small>곳</small></span><span class="t"><i style="width:${v}%"></i></span></div>`).join('');
-  const d=Math.round(otherV)-Math.round(teamV);
-  let msg=me.team==='solo'
-    ?`혼자 시작한 곳은 둘 이상이 시작한 곳보다 100곳 중 <b>${d}곳 덜</b> 남았습니다.`
-    :`둘 이상이 시작한 곳은 혼자 시작한 곳보다 100곳 중 <b>${-d}곳 더</b> 남았습니다.`;
-  msg+=ageL===best[0]?` 그리고 ${ageL}는 가장 많이 남은 나이대입니다.`:` 가장 많이 남은 나이대는 <b>${best[0]}(${Math.round(best[1])}곳)</b>였습니다.`;
-  if(me.team==='solo')msg+=` 혼자라면 무엇을 덜어내고 누구와 나눌지가 중요한 질문이 됩니다.`;
+  let msg=`${inScope}${cmpSentence(myL,mineV,otL,otherV)}`;
+  msg+=ageL===best[0]?` 대표자 연령별로는 ${ageL} 기업이 가장 많이 남아 있었습니다(전체 산업 기준).`:` 대표자 연령별로는 ${best[0]} 기업이 가장 많이 남아 있었습니다(${Math.round(best[1])}곳, 전체 산업 기준).`;
   $('insight').innerHTML=msg;
+  renderAudience();
   show('s-final');track('me_complete',{industry:k});
 }
 
 /* ---------- share ---------- */
 function shareUrl(){const u=new URL(location.origin+location.pathname);u.searchParams.set('i',state.pick);u.searchParams.set('y',state.y);u.searchParams.set('s',Math.random().toString(36).slice(2,8));return u.toString();}
-function shareText(){
-  const [k,label,ind]=P(),y=state.y,cnt=n(ind,y),keep=new Set(ORDER.slice(0,cnt)),rows=[];
-  for(let r=0;r<10;r++){let s='';for(let c=0;c<10;c++)s+=keep.has(r*10+c)?'🟨':'⬛';rows.push(s);}
-  return `내 사업의 생존지도\n${COHORT[y]}년에 새로 생긴 ${label} 100곳 중\n${DATA_YEAR}년에도 남아 있던 곳: ${cnt}곳\n${rows.join('\n')}\n출처: 국가데이터처 기업생멸행정통계\n${shareUrl()}`;
-}
-$('shKakao').addEventListener('click',async()=>{
-  track('share_click',{channel:'kakao'});
+async function shareKakao(place){
+  track('share_click',{channel:'kakao',place});
   const url=shareUrl(),[k,label,ind]=P(),cnt=n(ind,state.y);
   if(CONFIG.kakaoJsKey&&window.Kakao){try{if(!Kakao.isInitialized())Kakao.init(CONFIG.kakaoJsKey);Kakao.Share.sendDefault({objectType:'text',text:`${COHORT[state.y]}년에 생긴 ${label} 100곳 중 ${DATA_YEAR}년에 남은 곳은 ${cnt}곳. 당신 업종은?`,link:{mobileWebUrl:url,webUrl:url}});return;}catch(e){}}
   if(navigator.share){try{await navigator.share({title:'내 사업의 생존지도',text:`${label} 100곳 중 ${cnt}곳`,url});return;}catch(e){}}
   toast(await copyText(url)?'링크를 복사했어요. 카톡에 붙여넣어 주세요':'복사하지 못했어요');
-});
+}
+$('shKakao').addEventListener('click',()=>shareKakao('final'));
+$('qsKakao').addEventListener('click',()=>shareKakao('result'));
 if(CONFIG.kakaoJsKey){const s=document.createElement('script');s.src='https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';document.head.appendChild(s);}
 
 function drawCard(){
@@ -436,8 +482,8 @@ function drawCard(){
   const css=getComputedStyle(document.documentElement),col=k=>css.getPropertyValue(k).trim();
   const [k,label,ind]=P(),y=state.y,cnt=n(ind,y),keep=new Set(ORDER.slice(0,cnt));
   x.fillStyle=col('--bg');x.fillRect(0,0,W,H);
-  x.fillStyle=col('--muted');x.font=`500 32px ${F}`;x.fillText(`내 사업의 생존지도 · ${COHORT[y]}년에 문을 연`,90,115);
-  x.fillStyle=col('--ink');x.font=`700 52px ${F}`;x.fillText(`${label} 100곳`,90,185);
+  x.fillStyle=col('--muted');x.font=`500 32px ${F}`;x.fillText(`내 사업의 생존지도 · ${COHORT[y]}년에 새로 생긴`,90,115);
+  x.fillStyle=col('--ink');x.font=`700 52px ${F}`;x.fillText(`${label} 기업 100곳`,90,185);
   const size=64,gap=9,gw=size*10+gap*9,ox=(W-gw)/2,oy=250;
   x.fillStyle='#FFFFFF';x.fillRect(ox-24,oy-24,gw+48,gw+48);
   for(let i=0;i<100;i++){const cx=ox+(i%10)*(size+gap),cy=oy+Math.floor(i/10)*(size+gap),h=size;
@@ -448,17 +494,55 @@ function drawCard(){
   const w=x.measureText(String(cnt)).width;x.fillStyle=col('--muted');x.font=`400 40px ${F}`;x.fillText(`곳이 ${DATA_YEAR}년에도 남아 있었습니다`,100+w,ty);
   x.font=`400 24px ${F}`;
   x.fillText(`출처: 국가데이터처 기업생멸행정통계 · '${ind}' 전체 기준`,90,H-78);
-  x.fillText('과거 기록이며 개별 사업의 미래 확률이 아닙니다',90,H-42);
+  x.fillText(`${DATA_YEAR}년 잠정치 · 과거 기록이며 개별 사업의 미래 확률이 아닙니다`,90,H-42);
   return c.toDataURL('image/png');
 }
-$('shImg').addEventListener('click',async()=>{track('share_click',{channel:'image'});try{await document.fonts.ready;}catch(e){}$('sheetImg').src=drawCard();$('sheet').hidden=false;});
+async function shareImage(place){track('share_click',{channel:'image',place});try{await document.fonts.ready;}catch(e){}$('sheetImg').src=drawCard();$('sheet').hidden=false;}
+$('shImg').addEventListener('click',()=>shareImage('final'));
+$('qsImg').addEventListener('click',()=>shareImage('result'));
 $('sheetSave').addEventListener('click',()=>{const a=document.createElement('a');a.href=$('sheetImg').src;a.download='survival-map.png';document.body.appendChild(a);a.click();a.remove();});
 $('sheetClose').addEventListener('click',()=>$('sheet').hidden=true);
 $('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').hidden=true;});
 
-/* ---------- CTA ---------- */
-['ctaMain','ctaSub','ctaLink'].forEach(id=>{const a=$(id),href=CONFIG.cta[a.dataset.type];if(href){a.href=href;a.target='_blank';a.rel='noopener';}
-  a.addEventListener('click',e=>{track('cta_click',{type:a.dataset.type});if(!href){e.preventDefault();toast('링크 연결 예정입니다');}});});
+/* ---------- 결과 이후: 지금 어떤 단계인가 (한 번만 구분, 유형별 다음 행동 하나) ----------
+   owner(현재 운영 중) → 마케팅주의자 글 + 오픈톡 + 행동주의자 카드(작게)
+   preparing(창업 준비 중) → 행동주의자 「나를 소개합니다」 + 오픈톡
+   기록: audience_select(처음 1회), audience_change, cta_click{type,audience,place}. 이름·연락처 없음. */
+const AUD={
+  owner:{icon:'🏪',label:'현재 운영 중',title:'사업을 운영하고 계시는군요.',
+    text:'생존 통계는 과거의 기록입니다. 지금 내 사업의 고객과 매출을 위해 무엇을 점검할지는 별개의 질문입니다.',
+    rec:{k:'추천 콘텐츠 · 마케팅주의자',t:'자영업자 폐업을 막는 단 하나의 마케팅 전략',d:'사업을 운영하는 관점에서 읽어볼 마케팅 콘텐츠'},
+    main:{type:'mkt_blog',label:'마케팅 전략 읽기'},sub:true,card:true},
+  preparing:{icon:'💡',label:'창업 준비 중',title:'창업을 준비하고 계시는군요.',
+    text:'생존 통계는 과거 같은 업종에서 새로 생긴 기업들의 기록입니다. 지금 준비하는 사업의 앞날을 알려주는 숫자는 아닙니다.',
+    rec:{k:'추천 콘텐츠 · 행동주의자',t:'나를 소개합니다 · 부와 행복의 추월차선',d:'사업을 시작하고 이어가는 관점에서 읽어볼 이야기'},
+    main:{type:'haengdong',label:'행동주의자 이야기 읽기'},sub:true,card:false}
+};
+function linkFor(type,place,slot){const u=new URL(CONFIG.links[type]);u.searchParams.set('utm_source','micro_lab');u.searchParams.set('utm_medium',`${place}_${slot}`);u.searchParams.set('utm_campaign','survival');u.searchParams.set('utm_content',state.aud||'none');return u.toString();}
+function audHTML(place){
+  const a=state.aud?AUD[state.aud]:null;
+  let h=`<div class="aud"><p class="aud-k">생존 통계를 확인한 다음</p><h3>지금 어떤 단계에 계신가요?</h3><p class="aud-help">상황에 맞는 콘텐츠를 추천해 드립니다.</p>
+    <div class="aud-opts">${Object.entries(AUD).map(([k,v])=>`<button class="aud-opt" type="button" data-aud="${k}" aria-pressed="${state.aud===k}"><span class="ic" aria-hidden="true">${v.icon}</span>${v.label}</button>`).join('')}</div>`;
+  if(a){
+    h+=`<div class="aud-body"><h4>${a.title}</h4><p>${a.text}</p>
+      <div class="rec"><span class="rec-k">${a.rec.k}</span><b>${a.rec.t}</b><span class="rec-d">${a.rec.d}</span></div>
+      <a class="btn accent" data-type="${a.main.type}" data-slot="main" data-place="${place}" href="${linkFor(a.main.type,place,'main')}" target="_blank" rel="noopener">${a.main.label}</a>
+      ${a.sub?`<a class="sub-link" data-type="opentalk" data-slot="sub" data-place="${place}" href="${linkFor('opentalk',place,'sub')}" target="_blank" rel="noopener">마케팅주의자 오픈톡방 ↗</a>`:''}
+      ${a.card?`<a class="cta-card" data-type="haengdong" data-slot="card" data-place="${place}" href="${linkFor('haengdong',place,'card')}" target="_blank" rel="noopener"><span class="cc-av" aria-hidden="true">행</span><span class="cc-body"><span class="cc-k">행동주의자의 글</span><span class="cc-t">나를 소개합니다 · 부와 행복의 추월차선</span></span><span class="cc-go" aria-hidden="true">→</span></a>`:''}
+    </div>`;
+  }
+  return h+`</div>`;
+}
+function renderAudience(){$('audResult').innerHTML=audHTML('result');$('audFinal').innerHTML=audHTML('final');}
+['audResult','audFinal'].forEach(id=>$(id).addEventListener('click',e=>{
+  const opt=e.target.closest('.aud-opt');
+  if(opt){const v=opt.dataset.aud;if(v===state.aud)return;
+    if(!state.aud)track('audience_select',{audience:v,industry:state.pick,place:id==='audResult'?'result':'final'});
+    else track('audience_change',{audience:v});
+    state.aud=v;renderAudience();return;}
+  const a=e.target.closest('a[data-type]');
+  if(a)track('cta_click',{type:a.dataset.type,slot:a.dataset.slot,audience:state.aud,place:a.dataset.place});
+}));
 
 runIntro();
 </script>
