@@ -29,7 +29,7 @@ a{color:var(--accent)}
 .brand b{font-weight:500;color:var(--muted);font-size:14px}
 .skip{background:none;border:0;color:var(--muted);font-size:14px;cursor:pointer;padding:6px 0}
 .scene{flex:1;display:flex;flex-direction:column;justify-content:center;padding-block:24px}
-.scene[hidden]{display:none!important}
+[hidden]{display:none!important}
 
 .lines{display:flex;flex-direction:column;gap:12px}
 .lines p{margin:0;font-size:22px;font-weight:500;line-height:1.5;opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease,color .6s ease}
@@ -128,6 +128,12 @@ h2{font-size:22px}
 .rec b{font-size:16px}
 .rec .rec-d{font-size:13.5px;color:var(--muted)}
 .aud-body .btn{margin-top:12px}
+.pf{margin-top:14px}
+.pf-q{margin:0;font-size:14.5px;font-weight:500}
+.pf-opts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pf-opt{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:14px;color:var(--ink);cursor:pointer}
+.pf-opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:500}
+.pf-note{margin:8px 0 0;font-size:12px;color:var(--muted)}
 .sub-link{display:inline-block;margin-top:12px;font-size:14px;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
 .diff{display:flex;flex-direction:column;gap:12px;margin-top:22px}
 .dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
@@ -206,10 +212,12 @@ h2{font-size:22px}
     <div class="disclaimer">과거 같은 업종에서 새로 생긴 기업들의 기록입니다. 개별 사업의 미래 확률이 아닙니다.</div>
     <div class="quick-share"><span>이 결과 보내기</span><button class="qs" type="button" id="qsKakao">카카오톡</button><button class="qs" type="button" id="qsImg">이미지</button></div>
 
-    <div id="audResult"></div>
-
-    <button class="textlink" type="button" id="toDiff">오래 남은 기업들은 무엇이 달랐을까? 추가 통계 보기 →</button>
-    <p class="help" id="teaserSub" style="text-align:center;font-size:12.5px;margin-top:2px"></p>
+    <button class="teaser" type="button" id="toDiff">
+      <span class="t1">같은 해에 생긴 기업이라도</span>
+      <b>오래 남은 기업들은 무엇이 달랐을까?</b>
+      <span class="t2" id="teaserSub"></span>
+      <span class="t3">추가 통계 보기 →</span>
+    </button>
     <button class="textlink" type="button" id="otherInd">다른 업종 보기</button>
   </section>
 
@@ -280,6 +288,7 @@ const CONFIG={
   kakaoJsKey:"",
   links:{
     mkt_blog:"https://blog.naver.com/godehd54/223799699931",   // 마케팅주의자 블로그: 자영업자 폐업을 막는 단 하나의 마케팅 전략
+    mkt_final:"https://blog.naver.com/godehd54/223742434223",   // 마케팅주의자: [마케팅 대행] 사기당하는 게 두렵나요 그럼 사업 못합니다. (마지막 화면 링크 1개)
     opentalk:"https://open.kakao.com/o/sjQvlOVg",              // 마케팅주의자 오픈톡방
     haengdong:"https://blog.naver.com/guraud22/222099927754"   // 행동주의자 블로그: 나를 소개합니다(부와 행복의 추월차선)
   }
@@ -339,12 +348,15 @@ const AGES=[["30대 미만",26.7],["30대",35.3],["40대",39.2],["50대",38.4],[
 const $=id=>document.getElementById(id);
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const sleep=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
-function show(id){document.querySelectorAll('.scene').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0);$('skipBtn').hidden=id!=='s-intro';}
+/* 중간 이탈 위치: 화면마다 처음 도달했을 때 한 번만 reach{step} 기록 */
+const STEPS={'s-intro':'1_intro','s-pick':'2_pick','s-guess':'3_guess','s-result':'4_result','s-diff':'5_diff','s-me1':'6_me1','s-me2':'7_me2','s-final':'8_final'};
+function reach(id){const st=STEPS[id];if(!st)return;const k='reach:'+id;if(FIRED.has(k))return;FIRED.add(k);track('reach',{step:st});}
+function show(id){reach(id);document.querySelectorAll('.scene').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0);$('skipBtn').hidden=id!=='s-intro';}
 function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2200);}
 async function copyText(text){try{await navigator.clipboard.writeText(text);return true;}catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}ta.remove();return ok;}}
 function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const ORDER=(()=>{const r=rng(2018),o=[...Array(100).keys()];for(let i=99;i>0;i--){const j=Math.floor(r()*(i+1));[o[i],o[j]]=[o[j],o[i]];}return o;})(); // which shops close first
-const state={pick:null,guess:null,y:5,aud:null};
+const state={pick:null,guess:null,y:5,aud:null,years:null,worry:null};
 const P=()=>PICKS.find(p=>p[0]===state.pick);
 const val=(ind,y)=>IND[ind][y];
 const n=(ind,y)=>Math.round(val(ind,y));
@@ -504,20 +516,33 @@ $('sheetSave').addEventListener('click',()=>{const a=document.createElement('a')
 $('sheetClose').addEventListener('click',()=>$('sheet').hidden=true);
 $('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').hidden=true;});
 
-/* ---------- 결과 이후: 지금 어떤 단계인가 (한 번만 구분, 유형별 다음 행동 하나) ----------
-   owner(현재 운영 중) → 마케팅주의자 글 + 오픈톡 + 행동주의자 카드(작게)
-   preparing(창업 준비 중) → 행동주의자 「나를 소개합니다」 + 오픈톡
+/* ---------- 마지막 화면: 지금 어떤 단계인가 → 연차·걱정 선택 → 외부 링크 1개 ----------
+   owner·preparing 모두 → 마케팅주의자 「사기당하는 게 두렵나요 그럼 사업 못합니다」 1개 (오키님 지정 2026-10-14)
    기록: audience_select(처음 1회), audience_change, cta_click{type,audience,place}. 이름·연락처 없음. */
 const AUD={
   owner:{icon:'🏪',label:'현재 운영 중',title:'사업을 운영하고 계시는군요.',
     text:'생존 통계는 과거의 기록입니다. 지금 내 사업의 고객과 매출을 위해 무엇을 점검할지는 별개의 질문입니다.',
-    rec:{k:'추천 콘텐츠 · 마케팅주의자',t:'자영업자 폐업을 막는 단 하나의 마케팅 전략',d:'사업을 운영하는 관점에서 읽어볼 마케팅 콘텐츠'},
-    main:{type:'mkt_blog',label:'마케팅 전략 읽기'},sub:true,card:true},
+    rec:{k:'마케팅주의자의 글',t:'사기당하는 게 두렵나요? 그럼 사업 못합니다.',d:'사업을 운영하는 대표님께'},
+    main:{type:'mkt_final',label:'글 읽어보기'}},
   preparing:{icon:'💡',label:'창업 준비 중',title:'창업을 준비하고 계시는군요.',
     text:'생존 통계는 과거 같은 업종에서 새로 생긴 기업들의 기록입니다. 지금 준비하는 사업의 앞날을 알려주는 숫자는 아닙니다.',
-    rec:{k:'추천 콘텐츠 · 행동주의자',t:'나를 소개합니다 · 부와 행복의 추월차선',d:'사업을 시작하고 이어가는 관점에서 읽어볼 이야기'},
-    main:{type:'haengdong',label:'행동주의자 이야기 읽기'},sub:true,card:false}
+    rec:{k:'마케팅주의자의 글',t:'사기당하는 게 두렵나요? 그럼 사업 못합니다.',d:'사업을 준비하는 분께'},
+    main:{type:'mkt_final',label:'글 읽어보기'}}
 };
+/* 사용 후 짧은 선택: 사업연차(운영 중만) + 가장 걱정되는 것. 버튼 값만 기록, 이름·연락처 없음 */
+const PF={
+  years:{q:'몇 년째 운영 중이신가요?',opts:{lt1:'1년 미만',y1_3:'1~3년',y3_5:'3~5년',gt5:'5년 이상'}},
+  worry:{q:'지금 가장 걱정되는 건?',opts:{
+    owner:{customers:'손님 모으기',revenue:'매출·수익',cost:'임대료·비용',people:'직원·사람',compete:'경쟁'},
+    preparing:{item:'아이템 정하기',fund:'창업 자금',location:'입지·상권',customers:'손님 모으기',last:'오래 버틸 수 있을지'}}}
+};
+function pfHTML(){
+  const rows=[];
+  if(state.aud==='owner')rows.push(['years',PF.years.q,PF.years.opts]);
+  rows.push(['worry',PF.worry.q,PF.worry.opts[state.aud]]);
+  return rows.map(([f,q,o])=>`<div class="pf"><p class="pf-q">${q}</p><div class="pf-opts">${Object.entries(o).map(([k,v])=>`<button class="pf-opt" type="button" data-pf="${f}" data-v="${k}" aria-pressed="${state[f]===k}">${v}</button>`).join('')}</div></div>`).join('')
+    +`<p class="pf-note">골라 주시면 다음 콘텐츠를 만드는 데 참고합니다. 이름·연락처는 받지 않아요.</p>`;
+}
 function linkFor(type,place,slot){const u=new URL(CONFIG.links[type]);u.searchParams.set('utm_source','micro_lab');u.searchParams.set('utm_medium',`${place}_${slot}`);u.searchParams.set('utm_campaign','survival');u.searchParams.set('utm_content',state.aud||'none');return u.toString();}
 function audHTML(place){
   const a=state.aud?AUD[state.aud]:null;
@@ -525,26 +550,29 @@ function audHTML(place){
     <div class="aud-opts">${Object.entries(AUD).map(([k,v])=>`<button class="aud-opt" type="button" data-aud="${k}" aria-pressed="${state.aud===k}"><span class="ic" aria-hidden="true">${v.icon}</span>${v.label}</button>`).join('')}</div>`;
   if(a){
     h+=`<div class="aud-body"><h4>${a.title}</h4><p>${a.text}</p>
+      ${pfHTML()}
       <div class="rec"><span class="rec-k">${a.rec.k}</span><b>${a.rec.t}</b><span class="rec-d">${a.rec.d}</span></div>
       <a class="btn accent" data-type="${a.main.type}" data-slot="main" data-place="${place}" href="${linkFor(a.main.type,place,'main')}" target="_blank" rel="noopener">${a.main.label}</a>
-      ${a.sub?`<a class="sub-link" data-type="opentalk" data-slot="sub" data-place="${place}" href="${linkFor('opentalk',place,'sub')}" target="_blank" rel="noopener">마케팅주의자 오픈톡방 ↗</a>`:''}
-      ${a.card?`<a class="cta-card" data-type="haengdong" data-slot="card" data-place="${place}" href="${linkFor('haengdong',place,'card')}" target="_blank" rel="noopener"><span class="cc-av" aria-hidden="true">행</span><span class="cc-body"><span class="cc-k">행동주의자의 글</span><span class="cc-t">나를 소개합니다 · 부와 행복의 추월차선</span></span><span class="cc-go" aria-hidden="true">→</span></a>`:''}
     </div>`;
   }
   return h+`</div>`;
 }
-function renderAudience(){$('audResult').innerHTML=audHTML('result');$('audFinal').innerHTML=audHTML('final');}
-['audResult','audFinal'].forEach(id=>$(id).addEventListener('click',e=>{
+function renderAudience(){$('audFinal').innerHTML=audHTML('final');}
+['audFinal'].forEach(id=>$(id).addEventListener('click',e=>{
   const opt=e.target.closest('.aud-opt');
   if(opt){const v=opt.dataset.aud;if(v===state.aud)return;
-    if(!state.aud)track('audience_select',{audience:v,industry:state.pick,place:id==='audResult'?'result':'final'});
+    if(!state.aud)track('audience_select',{audience:v,industry:state.pick,place:'final'});
     else track('audience_change',{audience:v});
-    state.aud=v;renderAudience();return;}
+    state.aud=v;state.worry=null;if(v!=='owner')state.years=null;renderAudience();return;}
+  const pf=e.target.closest('.pf-opt');
+  if(pf){const f=pf.dataset.pf,v=pf.dataset.v;if(state[f]===v)return;state[f]=v;
+    const k=`pf:${state.aud}:${f}`;if(!FIRED.has(k)){FIRED.add(k);track('profile_select',{field:f,value:v,audience:state.aud,industry:state.pick});}
+    renderAudience();return;}
   const a=e.target.closest('a[data-type]');
   if(a)track('cta_click',{type:a.dataset.type,slot:a.dataset.slot,audience:state.aud,place:a.dataset.place});
 }));
 
-runIntro();
+reach('s-intro');runIntro();
 </script>
 </body>
 </html>
