@@ -381,13 +381,11 @@ const RENDER={
       <div id="after" hidden><p class="note" style="text-align:center;max-width:360px;margin:12px auto 0">국가데이터처 2024년 생명표의 평균값입니다. 부모님의 건강 상태는 반영하지 않았어요.</p>
       <div style="max-width:420px;margin:16px auto 0;width:100%"><button class="btn" type="button" id="toChange">1년에 두 번 더 가면? →</button>
 </div></div></section>`;
-    $('g').appendChild(T.c);const p={child:1,dim:0,drain:0,pack:0};T.draw(p);
-    const my=sceneSeq, alive=()=>my===sceneSeq;
-    (async()=>{setCap(['앞으로 함께할 수 있는 시간은 이만큼 같지만,']);await anim(1000,k=>{p.dim=k;T.draw(p);});await sleep(500);if(!alive())return;
-      setCap([`1년에 ${v}번만 만난다면`]);await anim(2000,k=>{p.drain=k;T.draw(p);});await anim(1100,k=>{p.pack=k;T.draw(p);});await anim(600,k=>T.shrink(k,m.N));if(!alive())return;
-      countUp($('cnt'),m.N,1200);$('resd').textContent=`평균 기대여명 약 ${m.R.toFixed(1)}년 × 1년에 ${v}번`;
-      setCap([`앞으로 만날 날을 모두 합쳐도,`,`어릴 때 매일 보던 날로 치면 <b style="color:var(--pink)">${span}</b>입니다.`]);
-      $('after').hidden=false;})();
+    /* 줄어드는 연출은 앞에서 이미 봤으므로, 내 결과는 바로 보여줌 (숫자만 짧게 올라감) */
+    $('g').appendChild(T.c);T.draw({child:1,dim:1,drain:1,pack:1});T.shrink(1,m.N);
+    countUp($('cnt'),m.N,700);$('resd').textContent=`평균 기대여명 약 ${m.R.toFixed(1)}년 × 1년에 ${v}번`;
+    setCap([`앞으로 만날 날을 모두 합쳐도,`,`어릴 때 매일 보던 날로 치면 <b style="color:var(--pink)">${span}</b>입니다.`]);
+    $('after').hidden=false;
     $('toChange').addEventListener('click',next);},
   change(){theme('');const base=tlModel(state.age,state.v).N;const mMax=tlModel(state.age,52);const T=makeTL(mMax);
     stage.innerHTML=`<section class="scene"><div class="gridwrap">
